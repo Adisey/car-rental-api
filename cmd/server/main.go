@@ -11,6 +11,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(map[string]string{
 		"status": "ok",
+		"version": "1.0.6",
 	})
 }
 
