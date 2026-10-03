@@ -65,6 +65,54 @@ paths:
         "404":
           description: Car not found
 
+    put:
+      operationId: updateCar
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCarRequest"
+
+      responses:
+        "200":
+          description: Updated car
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Car"
+
+        "404":
+          description: Car not found
+
+    delete:
+      operationId: deleteCar
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "204":
+          description: Car deleted
+
+        "404":
+          description: Car not found
+
+
 components:
   schemas:
 
@@ -98,7 +146,18 @@ components:
         color:
           type: string
 
+    UpdateCarRequest:
+      type: object
 
+      required:
+        - name
+
+      properties:
+        name:
+          type: string
+
+        color:
+          type: string
 
 
 

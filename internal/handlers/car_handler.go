@@ -11,6 +11,35 @@ import (
 )
 
 func Cars(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		getCars(w, r)
+
+	case http.MethodPost:
+		createCar(w, r)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func CarByID(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		getCarByID(w, r)
+
+	case http.MethodPut:
+		updateCar(w, r)
+
+	case http.MethodDelete:
+		deleteCar(w, r)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func getCars(w http.ResponseWriter, r *http.Request) {
 	log.Println("GET /cars")
 
 	w.Header().Set("Content-Type", "application/json")
@@ -18,7 +47,7 @@ func Cars(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(services.GetCars())
 }
 
-func CarByID(w http.ResponseWriter, r *http.Request) {
+func getCarByID(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/cars/")
 
 	log.Println("GET /cars/", id)
@@ -40,7 +69,7 @@ func CarByID(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(car)
 }
 
-func CreateCar(w http.ResponseWriter, r *http.Request) {
+func createCar(w http.ResponseWriter, r *http.Request) {
 	var request api_models.CreateCarRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -59,4 +88,52 @@ func CreateCar(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	_ = json.NewEncoder(w).Encode(car)
+}
+
+func updateCar(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(r.URL.Path, "/cars/")
+
+	var request api_models.UpdateCarRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"error": "invalid request",
+		})
+
+		return
+	}
+
+	car, found := services.UpdateCar(id, request)
+
+	if !found {
+		w.WriteHeader(http.StatusNotFound)
+
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"error": "car not found",
+		})
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	_ = json.NewEncoder(w).Encode(car)
+}
+
+func deleteCar(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(r.URL.Path, "/cars/")
+
+	if !services.DeleteCar(id) {
+		w.WriteHeader(http.StatusNotFound)
+
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"error": "car not found",
+		})
+
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

@@ -46,3 +46,31 @@ func CreateCar(request api_models.CreateCarRequest) api_models.Car {
 
 	return car
 }
+
+func UpdateCar(
+	id string,
+	request api_models.UpdateCarRequest,
+) (*api_models.Car, bool) {
+
+	for i, car := range cars {
+		if car.Id == id {
+			cars[i].Name = request.Name
+			cars[i].Color = request.Color
+
+			return &cars[i], true
+		}
+	}
+
+	return nil, false
+}
+
+func DeleteCar(id string) bool {
+	for i, car := range cars {
+		if car.Id == id {
+			cars = append(cars[:i], cars[i+1:]...)
+			return true
+		}
+	}
+
+	return false
+}

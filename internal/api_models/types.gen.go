@@ -16,5 +16,14 @@ type CreateCarRequest struct {
 	Name  string  `json:"name"`
 }
 
+// UpdateCarRequest defines model for UpdateCarRequest.
+type UpdateCarRequest struct {
+	Color *string `json:"color,omitempty"`
+	Name  string  `json:"name"`
+}
+
 // CreateCarJSONRequestBody defines body for CreateCar for application/json ContentType.
 type CreateCarJSONRequestBody = CreateCarRequest
+
+// UpdateCarJSONRequestBody defines body for UpdateCar for application/json ContentType.
+type UpdateCarJSONRequestBody = UpdateCarRequest
