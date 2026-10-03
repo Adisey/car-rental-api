@@ -1,6 +1,10 @@
 package services
 
-import api_models "github.com/Adisey/car-rental-api/internal/api_models"
+import (
+	"strconv"
+
+	api_models "github.com/Adisey/car-rental-api/internal/api_models"
+)
 
 var cars = []api_models.Car{
 	{
@@ -29,4 +33,16 @@ func GetCarByID(id string) (*api_models.Car, bool) {
 	}
 
 	return nil, false
+}
+
+func CreateCar(request api_models.CreateCarRequest) api_models.Car {
+	car := api_models.Car{
+		Id:    strconv.Itoa(len(cars) + 1),
+		Name:  request.Name,
+		Color: request.Color,
+	}
+
+	cars = append(cars, car)
+
+	return car
 }

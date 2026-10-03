@@ -23,7 +23,18 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/health", healthHandler)
-	http.HandleFunc("/cars", handlers.Cars)
+	http.HandleFunc("/cars", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			handlers.Cars(w, r)
+
+		case http.MethodPost:
+			handlers.CreateCar(w, r)
+
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})
 	http.HandleFunc("/cars/", handlers.CarByID)
 
 	log.Println("Server started on :8080")

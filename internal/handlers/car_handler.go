@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Adisey/car-rental-api/internal/api_models"
 	"github.com/Adisey/car-rental-api/internal/services"
 )
 
@@ -35,6 +36,27 @@ func CarByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+
+	_ = json.NewEncoder(w).Encode(car)
+}
+
+func CreateCar(w http.ResponseWriter, r *http.Request) {
+	var request api_models.CreateCarRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"error": "invalid request",
+		})
+
+		return
+	}
+
+	car := services.CreateCar(request)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 
 	_ = json.NewEncoder(w).Encode(car)
 }
