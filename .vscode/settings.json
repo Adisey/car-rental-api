@@ -1,0 +1,7 @@
+{
+  "cSpell.words": ["Adisey"],
+  "editor.formatOnSave": true,
+  "go.useLanguageServer": true,
+  "go.lintTool": "golangci-lint",
+  "go.formatTool": "gofmt"
+}
