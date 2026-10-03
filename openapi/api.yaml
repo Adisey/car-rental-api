@@ -1,0 +1,106 @@
+openapi: 3.0.3
+
+info:
+  title: Car Rental API
+  version: 1.0.0
+
+paths:
+  /cars:
+    get:
+      operationId: getCars
+
+      responses:
+        "200":
+          description: Cars list
+
+          content:
+            application/json:
+              schema:
+                type: array
+
+                items:
+                  $ref: "#/components/schemas/Car"
+
+    post:
+      operationId: createCar
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCarRequest"
+
+      responses:
+        "201":
+          description: Car created
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Car"
+
+  /cars/{id}:
+    get:
+      operationId: getCarById
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Car
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Car"
+
+        "404":
+          description: Car not found
+
+components:
+  schemas:
+
+    Car:
+      type: object
+
+      required:
+        - id
+        - name
+
+      properties:
+        id:
+          type: string
+
+        name:
+          type: string
+
+        color:
+          type: string
+
+    CreateCarRequest:
+      type: object
+
+      required:
+        - name
+
+      properties:
+        name:
+          type: string
+
+        color:
+          type: string
+
+
+
+
+
+
+          

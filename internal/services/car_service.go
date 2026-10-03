@@ -1,29 +1,29 @@
 package services
 
-import "github.com/Adisey/car-rental-api/internal/models"
+import api_models "github.com/Adisey/car-rental-api/internal/api_models"
 
-var cars = []models.Car{
+var cars = []api_models.Car{
 	{
-		ID:   "1",
+		Id:   "1",
 		Name: "BMW X5",
 	},
 	{
-		ID:   "2",
+		Id:   "2",
 		Name: "Toyota Corolla",
 	},
 	{
-		ID:   "3",
+		Id:   "3",
 		Name: "Skoda Octavia",
 	},
 }
 
-func GetCars() []models.Car {
+func GetCars() []api_models.Car {
 	return cars
 }
 
-func GetCarByID(id string) (*models.Car, bool) {
+func GetCarByID(id string) (*api_models.Car, bool) {
 	for _, car := range cars {
-		if car.ID == id {
+		if car.Id == id {
 			return &car, true
 		}
 	}
