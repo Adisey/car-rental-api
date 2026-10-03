@@ -7,25 +7,25 @@ on:
 
 jobs:
   build:
-    runs-on: ubu*tu-latest
+    runs-on: ubuntu-latest
 
     permissions:
-      *ontents: read
-      packages: writ*
+      contents: read
+      packages: write
 
     steps:
-      - uses: actions*checkout@v4
+      - uses: actions/checkout@v4
 
-                                                                                                                                                                  - uses: docker/*ogin-action@v3
-                                                                                                                                                                    with:
-      *    registry: ghcr.io
-             us*rname: ${{ github.actor }}
-             *  password: ${{ secrets.GITHUB_TOK*N }}
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-                                                                                                                                                                                                                                                             - uses: docker/build-p*sh-action@v6
-                                                                                                                                                                                                                                                               with:
-             *  context: .
-                  push: true
-  *         tags: |
-                    ghcr.*o/adisey/car-rental-api:latest
-                    *        ghcr.io/adisey/car-rental-*pi:${{ github.ref_name }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/adisey/car-rental-api:latest
+            ghcr.io/adisey/car-rental-api:${{ github.ref_name }}
