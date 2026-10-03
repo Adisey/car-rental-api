@@ -1,0 +1,31 @@
+name: Build Docker Image
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubu*tu-latest
+
+    permissions:
+      *ontents: read
+      packages: writ*
+
+    steps:
+      - uses: actions*checkout@v4
+
+                                                                                                                                                                  - uses: docker/*ogin-action@v3
+                                                                                                                                                                    with:
+      *    registry: ghcr.io
+             us*rname: ${{ github.actor }}
+             *  password: ${{ secrets.GITHUB_TOK*N }}
+
+                                                                                                                                                                                                                                                             - uses: docker/build-p*sh-action@v6
+                                                                                                                                                                                                                                                               with:
+             *  context: .
+                  push: true
+  *         tags: |
+                    ghcr.*o/adisey/car-rental-api:latest
+                    *        ghcr.io/adisey/car-rental-*pi:${{ github.ref_name }}

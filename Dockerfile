@@ -2,17 +2,13 @@ FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-COPY go.mod ./
-
-RUN go mod download
-
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o app .
+RUN go build -o app ./cmd/server
 
 FROM alpine:latest
 
-WORKDIR /root/
+WORKDIR /app
 
 COPY --from=builder /app/app .
 
