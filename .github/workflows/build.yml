@@ -29,3 +29,5 @@ jobs:
           tags: |
             ghcr.io/adisey/car-rental-api:latest
             ghcr.io/adisey/car-rental-api:${{ github.ref_name }}
+            
+            
