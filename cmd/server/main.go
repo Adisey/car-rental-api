@@ -19,6 +19,9 @@ func main() {
 	if err := db.Connect(ctx); err != nil {
 		log.Fatal(err)
 	}
+	if err := db.ConnectBun(); err != nil {
+		log.Fatal(err)
+	}
 
 	http.HandleFunc("/health", handlers.Health)
 	http.HandleFunc("/cars", handlers.Cars)

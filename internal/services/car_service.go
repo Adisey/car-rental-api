@@ -1,9 +1,11 @@
 package services
 
 import (
+	"context"
 	"strconv"
 
-	api_models "github.com/Adisey/car-rental-api/internal/api_models"
+	"github.com/Adisey/car-rental-api/internal/api_models"
+	"github.com/Adisey/car-rental-api/internal/repositories"
 )
 
 var cars = []api_models.Car{
@@ -21,8 +23,25 @@ var cars = []api_models.Car{
 	},
 }
 
-func GetCars() []api_models.Car {
-	return cars
+func GetCars(ctx context.Context) ([]api_models.Car, error) {
+	repo := repositories.NewCarRepository()
+
+	dbCars, err := repo.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	cars := make([]api_models.Car, 0, len(dbCars))
+
+	for _, car := range dbCars {
+		cars = append(cars, api_models.Car{
+			Id:          car.ID.String(),
+			Name:        car.Name,
+			Description: car.Description,
+		})
+	}
+
+	return cars, nil
 }
 
 func GetCarByID(id string) (*api_models.Car, bool) {

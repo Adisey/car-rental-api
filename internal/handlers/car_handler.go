@@ -44,7 +44,13 @@ func getCars(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	_ = json.NewEncoder(w).Encode(services.GetCars())
+	cars, err := services.GetCars(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(cars)
 }
 
 func getCarByID(w http.ResponseWriter, r *http.Request) {
