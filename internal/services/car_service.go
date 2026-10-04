@@ -37,9 +37,9 @@ func GetCarByID(id string) (*api_models.Car, bool) {
 
 func CreateCar(request api_models.CreateCarRequest) api_models.Car {
 	car := api_models.Car{
-		Id:    strconv.Itoa(len(cars) + 1),
-		Name:  request.Name,
-		Color: request.Color,
+		Id:          strconv.Itoa(len(cars) + 1),
+		Name:        request.Name,
+		Description: request.Description,
 	}
 
 	cars = append(cars, car)
@@ -55,7 +55,7 @@ func UpdateCar(
 	for i, car := range cars {
 		if car.Id == id {
 			cars[i].Name = request.Name
-			cars[i].Color = request.Color
+			cars[i].Description = request.Description
 
 			return &cars[i], true
 		}

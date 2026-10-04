@@ -141,7 +141,7 @@ components:
           type: string
         name:
           type: string
-        color:
+        description:
           type: string
 
     CreateCarRequest:
@@ -151,7 +151,7 @@ components:
       properties:
         name:
           type: string
-        color:
+        description:
           type: string
 
     UpdateCarRequest:
@@ -161,7 +161,7 @@ components:
       properties:
         name:
           type: string
-        color:
+        description:
           type: string
           
 
@@ -169,4 +169,3 @@ components:
 
 
 
-          

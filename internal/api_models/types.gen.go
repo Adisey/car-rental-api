@@ -5,15 +5,15 @@ package api_models
 
 // Car defines model for Car.
 type Car struct {
-	Color *string `json:"color,omitempty"`
-	Id    string  `json:"id"`
-	Name  string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	Id          string  `json:"id"`
+	Name        string  `json:"name"`
 }
 
 // CreateCarRequest defines model for CreateCarRequest.
 type CreateCarRequest struct {
-	Color *string `json:"color,omitempty"`
-	Name  string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
 }
 
 // HealthResponse defines model for HealthResponse.
@@ -30,8 +30,8 @@ type HealthResponse struct {
 
 // UpdateCarRequest defines model for UpdateCarRequest.
 type UpdateCarRequest struct {
-	Color *string `json:"color,omitempty"`
-	Name  string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
 }
 
 // CreateCarJSONRequestBody defines body for CreateCar for application/json ContentType.
