@@ -1,29 +1,26 @@
 package main
 
-// @title Car Rental API
-// @version 1.0
-// @description Car Rental backend service
-
 import (
-	"encoding/json"
+	"context"
 	"log"
 	"net/http"
 
+	"github.com/joho/godotenv"
+
+	"github.com/Adisey/car-rental-api/internal/db"
 	"github.com/Adisey/car-rental-api/internal/handlers"
 )
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(map[string]string{
-		"status":  "ok",
-		"version": "1.0.6",
-	})
-}
-
 func main() {
-	http.HandleFunc("/health", healthHandler)
+	if err := godotenv.Load(".env.local"); err != nil {
+		log.Println(".env.local file not found")
+	}
+	ctx := context.Background()
+	if err := db.Connect(ctx); err != nil {
+		log.Fatal(err)
+	}
 
+	http.HandleFunc("/health", handlers.Health)
 	http.HandleFunc("/cars", handlers.Cars)
 	http.HandleFunc("/cars/", handlers.CarByID)
 
