@@ -16,6 +16,18 @@ type CreateCarRequest struct {
 	Name  string  `json:"name"`
 }
 
+// HealthResponse defines model for HealthResponse.
+type HealthResponse struct {
+	// Database Example: ok
+	Database string `json:"database"`
+
+	// Status Example: ok
+	Status string `json:"status"`
+
+	// Version Example: 1.0.6
+	Version string `json:"version"`
+}
+
 // UpdateCarRequest defines model for UpdateCarRequest.
 type UpdateCarRequest struct {
 	Color *string `json:"color,omitempty"`

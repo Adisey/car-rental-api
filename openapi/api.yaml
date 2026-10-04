@@ -5,6 +5,24 @@ info:
   version: 1.0.0
 
 paths:
+  /health:
+    get:
+      operationId: getHealth
+      responses:
+        "200":
+          description: Service health
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
   /cars:
     get:
       operationId: getCars
@@ -95,6 +113,24 @@ paths:
 
 components:
   schemas:
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - version
+        - database
+      properties:
+        status:
+          type: string
+          example: ok
+        version:
+          type: string
+          example: 1.0.6
+        database:
+          type: string
+          example: ok
+
     Car:
       type: object
       required:
@@ -127,4 +163,10 @@ components:
           type: string
         color:
           type: string
+          
+
+
+
+
+
           
