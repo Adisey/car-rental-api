@@ -26,7 +26,7 @@ func Cars(w http.ResponseWriter, r *http.Request) {
 func CarByID(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		getCarByID(w, r)
+		getCarByIDHandler(w, r)
 
 	case http.MethodPut:
 		updateCar(w, r)
@@ -53,14 +53,13 @@ func getCars(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(cars)
 }
 
-func getCarByID(w http.ResponseWriter, r *http.Request) {
+func getCarByIDHandler(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/cars/")
 
-	log.Println("GET /cars/", id)
+	log.Println("Handler GET /cars/", id)
 
-	car, found := services.GetCarByID(id)
-
-	if !found {
+	car, err := services.GetCarByIDService(r.Context(), id)
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 
 		_ = json.NewEncoder(w).Encode(map[string]string{
@@ -74,6 +73,7 @@ func getCarByID(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewEncoder(w).Encode(car)
 }
+
 
 func createCar(w http.ResponseWriter, r *http.Request) {
 	var request api_models.CreateCarRequest

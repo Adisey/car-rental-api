@@ -2,6 +2,9 @@ package repositories
 
 import (
 	"context"
+	"log"
+
+	"github.com/google/uuid"
 
 	"github.com/Adisey/car-rental-api/internal/db"
 	"github.com/Adisey/car-rental-api/internal/db_models"
@@ -21,4 +24,23 @@ func (r *BunCarRepository) GetAll(ctx context.Context) ([]db_models.Car, error) 
 		Scan(ctx)
 
 	return cars, err
+}
+
+func (r *BunCarRepository) GetByIDRepository(
+	ctx context.Context,
+	id uuid.UUID,
+) (*db_models.Car, error) {
+	car := new(db_models.Car)
+	log.Println("Repository GET /cars/", id)
+
+	err := db.BunDB.NewSelect().
+		Model(car).
+		Where("id = ?", id).
+		Scan(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return car, nil
 }

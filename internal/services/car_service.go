@@ -2,7 +2,10 @@ package services
 
 import (
 	"context"
+	"log"
 	"strconv"
+
+	"github.com/google/uuid"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
 	"github.com/Adisey/car-rental-api/internal/repositories"
@@ -44,14 +47,28 @@ func GetCars(ctx context.Context) ([]api_models.Car, error) {
 	return cars, nil
 }
 
-func GetCarByID(id string) (*api_models.Car, bool) {
-	for _, car := range cars {
-		if car.Id == id {
-			return &car, true
-		}
+func GetCarByIDService(
+	ctx context.Context,
+	id string,
+) (*api_models.Car, error) {
+	repo := repositories.NewCarRepository()
+	log.Println("Handler GET /cars/", id)
+
+	carID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, false
+	dbCar, err := repo.GetByIDRepository(ctx, carID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api_models.Car{
+		Id:          dbCar.ID.String(),
+		Name:        dbCar.Name,
+		Description: dbCar.Description,
+	}, nil
 }
 
 func CreateCar(request api_models.CreateCarRequest) api_models.Car {
