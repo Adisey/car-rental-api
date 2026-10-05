@@ -41,6 +41,8 @@ func GetCars(ctx context.Context) ([]api_models.Car, error) {
 			Id:          car.ID.String(),
 			Name:        car.Name,
 			Description: car.Description,
+			CreatedAt:   car.CreatedAt,
+			UpdatedAt:   car.UpdatedAt,
 		})
 	}
 
@@ -68,6 +70,8 @@ func GetCarByIDService(
 		Id:          dbCar.ID.String(),
 		Name:        dbCar.Name,
 		Description: dbCar.Description,
+		CreatedAt:   dbCar.CreatedAt,
+		UpdatedAt:   dbCar.UpdatedAt,
 	}, nil
 }
 
