@@ -9,6 +9,7 @@ import (
 )
 
 type CarRepository interface {
-	GetAll(ctx context.Context) ([]db_models.Car, error)
-	GetByID(ctx context.Context, id uuid.UUID) (*db_models.Car, error)
+	GetAllRepository(ctx context.Context) ([]db_models.Car, error)
+	GetByIDRepository(ctx context.Context, id uuid.UUID) (*db_models.Car, error)
+	CreateRepository(ctx context.Context, car *db_models.Car) error
 }

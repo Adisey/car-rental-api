@@ -16,7 +16,7 @@ func Cars(w http.ResponseWriter, r *http.Request) {
 		getCars(w, r)
 
 	case http.MethodPost:
-		createCar(w, r)
+		createCarHandler(w, r)
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -74,8 +74,7 @@ func getCarByIDHandler(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(car)
 }
 
-
-func createCar(w http.ResponseWriter, r *http.Request) {
+func createCarHandler(w http.ResponseWriter, r *http.Request) {
 	var request api_models.CreateCarRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -88,7 +87,19 @@ func createCar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	car := services.CreateCar(request)
+	car, err := services.CreateCarService(
+		r.Context(),
+		request,
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"error": err.Error(),
+		})
+
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

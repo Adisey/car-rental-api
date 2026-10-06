@@ -3,11 +3,11 @@ package services
 import (
 	"context"
 	"log"
-	"strconv"
 
 	"github.com/google/uuid"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
+	"github.com/Adisey/car-rental-api/internal/db_models"
 	"github.com/Adisey/car-rental-api/internal/repositories"
 )
 
@@ -75,16 +75,30 @@ func GetCarByIDService(
 	}, nil
 }
 
-func CreateCar(request api_models.CreateCarRequest) api_models.Car {
-	car := api_models.Car{
-		Id:          strconv.Itoa(len(cars) + 1),
+func CreateCarService(
+	ctx context.Context,
+	request api_models.CreateCarRequest,
+) (*api_models.Car, error) {
+
+	repo := repositories.NewCarRepository()
+
+	car := &db_models.Car{
 		Name:        request.Name,
 		Description: request.Description,
 	}
 
-	cars = append(cars, car)
+	err := repo.CreateRepository(ctx, car)
+	if err != nil {
+		return nil, err
+	}
 
-	return car
+	return &api_models.Car{
+		Id:          car.ID.String(),
+		Name:        car.Name,
+		Description: car.Description,
+		CreatedAt:   car.CreatedAt,
+		UpdatedAt:   car.UpdatedAt,
+	}, nil
 }
 
 func UpdateCar(

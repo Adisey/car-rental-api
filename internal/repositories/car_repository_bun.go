@@ -44,3 +44,15 @@ func (r *BunCarRepository) GetByIDRepository(
 
 	return car, nil
 }
+
+func (r *BunCarRepository) CreateRepository(
+	ctx context.Context,
+	car *db_models.Car,
+) error {
+
+	_, err := db.BunDB.NewInsert().
+		Model(car).
+		Exec(ctx)
+
+	return err
+}
