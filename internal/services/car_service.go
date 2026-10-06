@@ -110,24 +110,46 @@ func CreateCarService(
 	}, nil
 }
 
-func UpdateCar(
+func UpdateCarService(
+	ctx context.Context,
 	id string,
 	request api_models.UpdateCarRequest,
-) (*api_models.Car, bool) {
+) (*api_models.Car, error) {
 
-	for i, car := range cars {
-		if car.Id == id {
-			cars[i].Name = request.Name
-			cars[i].Description = request.Description
-
-			return &cars[i], true
-		}
+	carID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, false
+	validationResult := validation.ValidateUpdateCarRequest(
+		request,
+	)
+
+	if validationResult.HasErrors() {
+		return nil, validationResult
+	}
+
+	repo := repositories.NewCarRepository()
+
+	car, err := repo.UpdateRepository(
+		ctx,
+		carID,
+		request,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api_models.Car{
+		Id:          car.ID.String(),
+		Name:        car.Name,
+		Description: car.Description,
+		CreatedAt:   car.CreatedAt,
+		UpdatedAt:   car.UpdatedAt,
+	}, nil
 }
 
-func DeleteCar(id string) bool {
+func DeleteCarService(id string) bool {
 	for i, car := range cars {
 		if car.Id == id {
 			cars = append(cars[:i], cars[i+1:]...)

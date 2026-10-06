@@ -3,9 +3,11 @@ package repositories
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 
+	"github.com/Adisey/car-rental-api/internal/api_models"
 	"github.com/Adisey/car-rental-api/internal/db"
 	"github.com/Adisey/car-rental-api/internal/db_models"
 )
@@ -55,4 +57,39 @@ func (r *BunCarRepository) CreateRepository(
 		Exec(ctx)
 
 	return err
+}
+
+
+
+
+func (r *BunCarRepository) UpdateRepository(
+	ctx context.Context,
+	id uuid.UUID,
+	request api_models.UpdateCarRequest,
+) (*db_models.Car, error) {
+
+	car, err := r.GetByIDRepository(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if request.Name != nil {
+		car.Name = *request.Name
+	}
+
+	if request.Description != nil {
+		car.Description = request.Description
+	}
+
+	car.UpdatedAt = time.Now().UTC()
+
+	_, err = db.BunDB.NewUpdate().
+		Model(car).
+		WherePK().
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return car, nil
 }

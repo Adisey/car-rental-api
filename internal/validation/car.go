@@ -58,12 +58,56 @@ func ValidateCreateCarRequest(
 
 	if len(description) > CarRules.Description.MaxLength {
 		result.Add(
-			"name",
+			"description",
 			"max_length",
 			map[string]any{
 				"max": CarRules.Description.MaxLength,
 			},
 		)
+	}
+
+	if request.Description != nil &&
+		strings.Contains(
+			strings.ToLower(*request.Description),
+			"test",
+		) {
+
+		result.Add(
+			"_object",
+			"not_time_for_tests",
+			nil,
+		)
+	}
+
+	return result
+}
+
+func ValidateUpdateCarRequest(
+	request api_models.UpdateCarRequest,
+) *ValidationResult {
+
+	result := New()
+
+	if request.Name != nil {
+		name := strings.TrimSpace(*request.Name)
+
+		if name == "" {
+			result.Add(
+				"name",
+				"required",
+				nil,
+			)
+		}
+
+		if len(name) < CarRules.Name.MinLength {
+			result.Add(
+				"name",
+				"min_length",
+				map[string]any{
+					"min": CarRules.Name.MinLength,
+				},
+			)
+		}
 	}
 
 	if request.Description != nil &&

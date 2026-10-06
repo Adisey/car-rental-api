@@ -24,8 +24,8 @@ func main() {
 	}
 
 	http.HandleFunc("/health", handlers.Health)
-	http.HandleFunc("/cars", handlers.Cars)
-	http.HandleFunc("/cars/", handlers.CarByID)
+	http.HandleFunc("/cars", handlers.CarsMainHandler)
+	http.HandleFunc("/cars/", handlers.CarByIDMainHandler)
 
 	log.Println("Server started on :8080")
 

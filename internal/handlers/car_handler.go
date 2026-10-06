@@ -12,10 +12,10 @@ import (
 	"github.com/Adisey/car-rental-api/internal/validation"
 )
 
-func Cars(w http.ResponseWriter, r *http.Request) {
+func CarsMainHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		getCars(w, r)
+		getCarsHandler(w, r)
 
 	case http.MethodPost:
 		createCarHandler(w, r)
@@ -25,23 +25,23 @@ func Cars(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CarByID(w http.ResponseWriter, r *http.Request) {
+func CarByIDMainHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		getCarByIDHandler(w, r)
 
-	case http.MethodPut:
-		updateCar(w, r)
+	case http.MethodPatch:
+		updateCarHandler(w, r)
 
 	case http.MethodDelete:
-		deleteCar(w, r)
+		deleteCarHandler(w, r)
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
 
-func getCars(w http.ResponseWriter, r *http.Request) {
+func getCarsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("GET /cars")
 
 	w.Header().Set("Content-Type", "application/json")
@@ -57,106 +57,92 @@ func getCars(w http.ResponseWriter, r *http.Request) {
 
 func getCarByIDHandler(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/cars/")
-
-	log.Println("Handler GET /cars/", id)
-
 	car, err := services.GetCarByIDService(r.Context(), id)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-
 		_ = json.NewEncoder(w).Encode(map[string]string{
 			"error": "car not found",
 		})
-
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
-
 	_ = json.NewEncoder(w).Encode(car)
 }
 
 func createCarHandler(w http.ResponseWriter, r *http.Request) {
 	var request api_models.CreateCarRequest
-
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-
 		_ = json.NewEncoder(w).Encode(map[string]string{
 			"error": "invalid request",
 		})
-
 		return
 	}
 	car, err := services.CreateCarService(
 		r.Context(),
 		request,
 	)
-
 	if err != nil {
 		var validationResult *validation.ValidationResult
-
 		if errors.As(err, &validationResult) {
 			w.WriteHeader(http.StatusBadRequest)
-
 			_ = json.NewEncoder(w).Encode(
 				validationResult.Response(),
 			)
-
 			return
 		}
-
 		w.WriteHeader(http.StatusInternalServerError)
-
 		_ = json.NewEncoder(w).Encode(map[string]string{
 			"error": err.Error(),
 		})
-
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-
 	_ = json.NewEncoder(w).Encode(car)
 }
 
-func updateCar(w http.ResponseWriter, r *http.Request) {
+func updateCarHandler(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/cars/")
-
 	var request api_models.UpdateCarRequest
-
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-
 		_ = json.NewEncoder(w).Encode(map[string]string{
 			"error": "invalid request",
 		})
-
 		return
 	}
-
-	car, found := services.UpdateCar(id, request)
-
-	if !found {
-		w.WriteHeader(http.StatusNotFound)
-
+	car, err := services.UpdateCarService(
+		r.Context(),
+		id,
+		request,
+	)
+	if err != nil {
+		var validationResult *validation.ValidationResult
+		if errors.As(err, &validationResult) {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(
+				validationResult.Response(),
+			)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(w).Encode(map[string]string{
-			"error": "car not found",
+			"error": err.Error(),
 		})
-
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
 	_ = json.NewEncoder(w).Encode(car)
 }
 
-func deleteCar(w http.ResponseWriter, r *http.Request) {
+func deleteCarHandler(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/cars/")
 
-	if !services.DeleteCar(id) {
+	if !services.DeleteCarService(id) {
 		w.WriteHeader(http.StatusNotFound)
 
 		_ = json.NewEncoder(w).Encode(map[string]string{
