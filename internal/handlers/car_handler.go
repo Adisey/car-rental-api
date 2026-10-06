@@ -2,12 +2,14 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strings"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
 	"github.com/Adisey/car-rental-api/internal/services"
+	"github.com/Adisey/car-rental-api/internal/validation"
 )
 
 func Cars(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +46,7 @@ func getCars(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	cars, err := services.GetCars(r.Context())
+	cars, err := services.GetCarsService(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -86,12 +88,24 @@ func createCarHandler(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
 	car, err := services.CreateCarService(
 		r.Context(),
 		request,
 	)
+
 	if err != nil {
+		var validationResult *validation.ValidationResult
+
+		if errors.As(err, &validationResult) {
+			w.WriteHeader(http.StatusBadRequest)
+
+			_ = json.NewEncoder(w).Encode(
+				validationResult.Response(),
+			)
+
+			return
+		}
+
 		w.WriteHeader(http.StatusInternalServerError)
 
 		_ = json.NewEncoder(w).Encode(map[string]string{

@@ -3,12 +3,14 @@ package services
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/google/uuid"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
 	"github.com/Adisey/car-rental-api/internal/db_models"
 	"github.com/Adisey/car-rental-api/internal/repositories"
+	"github.com/Adisey/car-rental-api/internal/validation"
 )
 
 var cars = []api_models.Car{
@@ -26,7 +28,7 @@ var cars = []api_models.Car{
 	},
 }
 
-func GetCars(ctx context.Context) ([]api_models.Car, error) {
+func GetCarsService(ctx context.Context) ([]api_models.Car, error) {
 	repo := repositories.NewCarRepository()
 
 	dbCars, err := repo.GetAll(ctx)
@@ -79,6 +81,45 @@ func CreateCarService(
 	ctx context.Context,
 	request api_models.CreateCarRequest,
 ) (*api_models.Car, error) {
+
+	validationResult := validation.New()
+
+	name := strings.TrimSpace(request.Name)
+
+	if name == "" {
+		validationResult.Add(
+			"name",
+			"required",
+			nil,
+		)
+	}
+
+	if len(name) < 3 {
+		validationResult.Add(
+			"name",
+			"min_length",
+			map[string]any{
+				"min": 3,
+			},
+		)
+	}
+
+	if request.Description != nil &&
+		strings.Contains(
+			strings.ToLower(*request.Description),
+			"test",
+		) {
+
+		validationResult.Add(
+			"_object",
+			"not_time_for_tests",
+			nil,
+		)
+	}
+
+	if validationResult.HasErrors() {
+		return nil, validationResult
+	}
 
 	repo := repositories.NewCarRepository()
 
