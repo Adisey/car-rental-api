@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"log"
-	"strings"
 
 	"github.com/google/uuid"
 
@@ -82,40 +81,9 @@ func CreateCarService(
 	request api_models.CreateCarRequest,
 ) (*api_models.Car, error) {
 
-	validationResult := validation.New()
-
-	name := strings.TrimSpace(request.Name)
-
-	if name == "" {
-		validationResult.Add(
-			"name",
-			"required",
-			nil,
-		)
-	}
-
-	if len(name) < 3 {
-		validationResult.Add(
-			"name",
-			"min_length",
-			map[string]any{
-				"min": 3,
-			},
-		)
-	}
-
-	if request.Description != nil &&
-		strings.Contains(
-			strings.ToLower(*request.Description),
-			"test",
-		) {
-
-		validationResult.Add(
-			"_object",
-			"not_time_for_tests",
-			nil,
-		)
-	}
+	validationResult := validation.ValidateCreateCarRequest(
+		request,
+	)
 
 	if validationResult.HasErrors() {
 		return nil, validationResult

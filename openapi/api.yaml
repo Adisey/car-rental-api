@@ -136,14 +136,19 @@ components:
       required:
         - id
         - name
+        - created_at
+        - updated_at
       properties:
         id:
           type: string
         name:
           type: string
+          minLength: 3
+          maxLength: 100
         description:
           type: string
           nullable: true
+          maxLength: 1000
         created_at:
           type: string
           format: date-time
@@ -158,8 +163,12 @@ components:
       properties:
         name:
           type: string
+          minLength: 3
+          maxLength: 100
         description:
           type: string
+          nullable: true
+          maxLength: 1000
 
     UpdateCarRequest:
       type: object
