@@ -2,11 +2,14 @@ package repositories
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
 
+	"github.com/Adisey/car-rental-api/internal/api_errors"
 	"github.com/Adisey/car-rental-api/internal/api_models"
 	"github.com/Adisey/car-rental-api/internal/db"
 	"github.com/Adisey/car-rental-api/internal/db_models"
@@ -41,6 +44,10 @@ func (r *BunCarRepository) GetByIDRepository(
 		Where("id = ?", id).
 		Where("deleted_at IS NULL").
 		Scan(ctx)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, api_errors.ErrNotFound
+	}
 
 	if err != nil {
 		return nil, err

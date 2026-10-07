@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Adisey/car-rental-api/internal/api_errors"
 	"github.com/Adisey/car-rental-api/internal/api_models"
 	"github.com/Adisey/car-rental-api/internal/services"
 	"github.com/Adisey/car-rental-api/internal/validation"
@@ -48,7 +49,7 @@ func getCarsHandler(w http.ResponseWriter, r *http.Request) {
 
 	cars, err := services.GetCarsService(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		api_errors.HandleApiError(w, err)
 		return
 	}
 
@@ -59,10 +60,7 @@ func getCarByIDHandler(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/cars/")
 	car, err := services.GetCarByIDService(r.Context(), id)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		_ = json.NewEncoder(w).Encode(map[string]string{
-			"error": "car not found",
-		})
+		api_errors.HandleApiError(w, err)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -149,7 +147,7 @@ func deleteCarHandler(w http.ResponseWriter, r *http.Request) {
 		id,
 	)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		api_errors.HandleApiError(w, err)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
