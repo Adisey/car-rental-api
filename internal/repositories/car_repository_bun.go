@@ -23,6 +23,7 @@ func (r *BunCarRepository) GetAll(ctx context.Context) ([]db_models.Car, error) 
 
 	err := db.BunDB.NewSelect().
 		Model(&cars).
+		Where("deleted_at IS NULL").
 		Scan(ctx)
 
 	return cars, err
@@ -38,6 +39,7 @@ func (r *BunCarRepository) GetByIDRepository(
 	err := db.BunDB.NewSelect().
 		Model(car).
 		Where("id = ?", id).
+		Where("deleted_at IS NULL").
 		Scan(ctx)
 
 	if err != nil {
@@ -58,9 +60,6 @@ func (r *BunCarRepository) CreateRepository(
 
 	return err
 }
-
-
-
 
 func (r *BunCarRepository) UpdateRepository(
 	ctx context.Context,
@@ -86,10 +85,35 @@ func (r *BunCarRepository) UpdateRepository(
 	_, err = db.BunDB.NewUpdate().
 		Model(car).
 		WherePK().
+		Where("deleted_at IS NULL").
 		Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return car, nil
+}
+
+func (r *BunCarRepository) DeleteRepository(
+	ctx context.Context,
+	id uuid.UUID,
+) error {
+
+	car, err := r.GetByIDRepository(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	now := time.Now().UTC()
+
+	car.DeletedAt = &now
+	car.UpdatedAt = now
+
+	_, err = db.BunDB.NewUpdate().
+		Model(car).
+		WherePK().
+		Where("deleted_at IS NULL").
+		Exec(ctx)
+
+	return err
 }

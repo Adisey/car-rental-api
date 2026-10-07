@@ -149,13 +149,17 @@ func UpdateCarService(
 	}, nil
 }
 
-func DeleteCarService(id string) bool {
-	for i, car := range cars {
-		if car.Id == id {
-			cars = append(cars[:i], cars[i+1:]...)
-			return true
-		}
+func DeleteCarService(ctx context.Context, id string) error {
+
+	carID, err := uuid.Parse(id)
+	if err != nil {
+		return err
 	}
 
-	return false
+	repo := repositories.NewCarRepository()
+
+	return repo.DeleteRepository(
+		ctx,
+		carID,
+	)
 }

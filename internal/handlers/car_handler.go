@@ -140,17 +140,17 @@ func updateCarHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteCarHandler(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/cars/")
-
-	if !services.DeleteCarService(id) {
+	id := strings.TrimPrefix(
+		r.URL.Path,
+		"/cars/",
+	)
+	err := services.DeleteCarService(
+		r.Context(),
+		id,
+	)
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-
-		_ = json.NewEncoder(w).Encode(map[string]string{
-			"error": "car not found",
-		})
-
 		return
 	}
-
 	w.WriteHeader(http.StatusNoContent)
 }

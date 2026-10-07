@@ -18,4 +18,8 @@ type CarRepository interface {
 		id uuid.UUID,
 		request api_models.UpdateCarRequest,
 	) (*db_models.Car, error)
+	DeleteRepository(
+		ctx context.Context,
+		id uuid.UUID,
+	) error
 }
