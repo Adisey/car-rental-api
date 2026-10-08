@@ -22,10 +22,20 @@ func GetCarsService(ctx context.Context) ([]api_models.Car, error) {
 	cars := make([]api_models.Car, 0, len(dbCars))
 
 	for _, car := range dbCars {
+
+		var color *api_models.Color
+		if car.Color != nil {
+			color = &api_models.Color{
+				Id:   car.Color.ID.String(),
+				Code: car.Color.Code,
+			}
+		}
+
 		cars = append(cars, api_models.Car{
 			Id:          car.ID.String(),
 			Name:        car.Name,
 			Description: car.Description,
+			Color:       color,
 			CreatedAt:   car.CreatedAt,
 			UpdatedAt:   car.UpdatedAt,
 		})
@@ -50,10 +60,20 @@ func GetCarByIDService(
 		return nil, err
 	}
 
+	var color *api_models.Color
+
+	if dbCar.Color != nil {
+		color = &api_models.Color{
+			Id:   dbCar.Color.ID.String(),
+			Code: dbCar.Color.Code,
+		}
+	}
+
 	return &api_models.Car{
 		Id:          dbCar.ID.String(),
 		Name:        dbCar.Name,
 		Description: dbCar.Description,
+		Color:       color,
 		CreatedAt:   dbCar.CreatedAt,
 		UpdatedAt:   dbCar.UpdatedAt,
 	}, nil

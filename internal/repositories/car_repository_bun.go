@@ -26,6 +26,7 @@ func (r *BunCarRepository) GetAll(ctx context.Context) ([]db_models.Car, error) 
 
 	err := db.BunDB.NewSelect().
 		Model(&cars).
+		Relation("Color").
 		Where("deleted_at IS NULL").
 		Scan(ctx)
 
@@ -41,7 +42,8 @@ func (r *BunCarRepository) GetByIDRepository(
 
 	err := db.BunDB.NewSelect().
 		Model(car).
-		Where("id = ?", id).
+		Relation("Color").
+		Where("car.id = ?", id).
 		Where("deleted_at IS NULL").
 		Scan(ctx)
 

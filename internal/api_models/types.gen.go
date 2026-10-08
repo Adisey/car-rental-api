@@ -9,6 +9,7 @@ import (
 
 // Car defines model for Car.
 type Car struct {
+	Color       *Color    `json:"color,omitempty"`
 	CreatedAt   time.Time `json:"created_at"`
 	Description *string   `json:"description,omitempty"`
 	Id          string    `json:"id"`

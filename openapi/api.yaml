@@ -219,6 +219,10 @@ components:
           type: string
           nullable: true
           maxLength: 1000
+        color:
+          allOf:
+            - $ref: "#/components/schemas/Color"
+          nullable: true
         created_at:
           type: string
           format: date-time
@@ -261,8 +265,6 @@ components:
 
         code:
           type: string
-          minLength: 2
-          maxLength: 50
     CreateColorRequest:
       type: object
       required:
