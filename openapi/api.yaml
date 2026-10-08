@@ -110,6 +110,76 @@ paths:
         "404":
           description: Car not found
 
+  /colors:
+    get:
+      operationId: getColors
+      responses:
+        "200":
+          description: Colors list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Color"
+    post:
+      operationId: createColor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateColorRequest"
+      responses:
+        "201":
+          description: Color created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Color"
+
+  /colors/{id}:
+    get:
+      operationId: getColorById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Color
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Color"
+        "404":
+          description: Color not found
+    patch:
+      operationId: updateColor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateColorRequest"
+      responses:
+        "200":
+          description: Updated color
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Color"
+        "404":
+          description: Color not found
+
 
 components:
   schemas:
@@ -155,7 +225,6 @@ components:
         updated_at:
           type: string
           format: date-time
-
     CreateCarRequest:
       type: object
       required:
@@ -169,7 +238,6 @@ components:
           type: string
           nullable: true
           maxLength: 1000
-
     UpdateCarRequest:
       type: object
 
@@ -182,6 +250,37 @@ components:
           type: string
           nullable: true
           
+    Color:
+      type: object
+      required:
+        - id
+        - code
+      properties:
+        id:
+          type: string
+
+        code:
+          type: string
+          minLength: 2
+          maxLength: 50
+    CreateColorRequest:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+          minLength: 2
+          maxLength: 50
+
+    UpdateColorRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: true
+          minLength: 2
+          maxLength: 50
 
 
 

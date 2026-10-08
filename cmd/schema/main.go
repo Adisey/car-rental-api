@@ -14,6 +14,7 @@ func main() {
 		bunschema.DialectPostgres,
 	).Load(
 		&db_models.Car{},
+		&db_models.Color{},
 	)
 
 	if err != nil {

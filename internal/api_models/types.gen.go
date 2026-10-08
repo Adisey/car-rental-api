@@ -16,10 +16,21 @@ type Car struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+// Color defines model for Color.
+type Color struct {
+	Code string `json:"code"`
+	Id   string `json:"id"`
+}
+
 // CreateCarRequest defines model for CreateCarRequest.
 type CreateCarRequest struct {
 	Description *string `json:"description,omitempty"`
 	Name        string  `json:"name"`
+}
+
+// CreateColorRequest defines model for CreateColorRequest.
+type CreateColorRequest struct {
+	Code string `json:"code"`
 }
 
 // HealthResponse defines model for HealthResponse.
@@ -40,8 +51,19 @@ type UpdateCarRequest struct {
 	Name        *string `json:"name,omitempty"`
 }
 
+// UpdateColorRequest defines model for UpdateColorRequest.
+type UpdateColorRequest struct {
+	Code *string `json:"code,omitempty"`
+}
+
 // CreateCarJSONRequestBody defines body for CreateCar for application/json ContentType.
 type CreateCarJSONRequestBody = CreateCarRequest
 
 // UpdateCarJSONRequestBody defines body for UpdateCar for application/json ContentType.
 type UpdateCarJSONRequestBody = UpdateCarRequest
+
+// CreateColorJSONRequestBody defines body for CreateColor for application/json ContentType.
+type CreateColorJSONRequestBody = CreateColorRequest
+
+// UpdateColorJSONRequestBody defines body for UpdateColor for application/json ContentType.
+type UpdateColorJSONRequestBody = UpdateColorRequest
