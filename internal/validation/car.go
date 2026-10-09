@@ -22,12 +22,8 @@ var CarRules = struct {
 func ValidateCreateCarRequest(
 	request api_models.CreateCarRequest,
 ) *ValidationResult {
-
 	result := New()
-
 	name := strings.TrimSpace(request.Name)
-	description := strings.TrimSpace(*request.Description)
-
 	if name == "" {
 		result.Add(
 			"name",
@@ -35,7 +31,6 @@ func ValidateCreateCarRequest(
 			nil,
 		)
 	}
-
 	if len(name) < CarRules.Name.MinLength {
 		result.Add(
 			"name",
@@ -45,7 +40,6 @@ func ValidateCreateCarRequest(
 			},
 		)
 	}
-
 	if len(name) > CarRules.Name.MaxLength {
 		result.Add(
 			"name",
@@ -55,7 +49,12 @@ func ValidateCreateCarRequest(
 			},
 		)
 	}
-
+	description := ""
+	if request.Description != nil {
+		description = strings.TrimSpace(
+			*request.Description,
+		)
+	}
 	if len(description) > CarRules.Description.MaxLength {
 		result.Add(
 			"description",
@@ -65,12 +64,10 @@ func ValidateCreateCarRequest(
 			},
 		)
 	}
-
-	if request.Description != nil &&
-		strings.Contains(
-			strings.ToLower(*request.Description),
-			"test",
-		) {
+	if strings.Contains(
+		strings.ToLower(description),
+		"test",
+	) {
 
 		result.Add(
 			"_object",
@@ -78,7 +75,6 @@ func ValidateCreateCarRequest(
 			nil,
 		)
 	}
-
 	return result
 }
 

@@ -17,6 +17,31 @@ type Car struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+// CarColor Color reference.
+// Resolution order:
+// 1. id
+// 2. code
+// Examples:
+// Existing color:
+//
+//	{
+//	  "id": "uuid"
+//	}
+//
+// Find or create by code:
+//
+//	{
+//	  "code": "red"
+//	}
+//
+// Clear color in PATCH:
+//
+//	{}
+type CarColor struct {
+	Code *string `json:"code,omitempty"`
+	Id   *string `json:"id,omitempty"`
+}
+
 // Color defines model for Color.
 type Color struct {
 	Code string `json:"code"`
@@ -25,8 +50,24 @@ type Color struct {
 
 // CreateCarRequest defines model for CreateCarRequest.
 type CreateCarRequest struct {
-	Description *string `json:"description,omitempty"`
-	Name        string  `json:"name"`
+	// Color Color reference.
+	// Resolution order:
+	// 1. id
+	// 2. code
+	// Examples:
+	// Existing color:
+	//   {
+	//     "id": "uuid"
+	//   }
+	// Find or create by code:
+	//   {
+	//     "code": "red"
+	//   }
+	// Clear color in PATCH:
+	//   {}
+	Color       *CarColor `json:"color,omitempty"`
+	Description *string   `json:"description,omitempty"`
+	Name        string    `json:"name"`
 }
 
 // CreateColorRequest defines model for CreateColorRequest.
@@ -48,8 +89,18 @@ type HealthResponse struct {
 
 // UpdateCarRequest defines model for UpdateCarRequest.
 type UpdateCarRequest struct {
-	Description *string `json:"description,omitempty"`
-	Name        *string `json:"name,omitempty"`
+	// Color Color update rules:
+	// field omitted:
+	//   color is not changed
+	// color: {}
+	//   clears current color
+	// color.id:
+	//   uses existing color
+	// color.code:
+	//   finds existing color by code or creates new one
+	Color       *CarColor `json:"color,omitempty"`
+	Description *string   `json:"description,omitempty"`
+	Name        *string   `json:"name,omitempty"`
 }
 
 // UpdateColorRequest defines model for UpdateColorRequest.

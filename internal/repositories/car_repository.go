@@ -17,6 +17,8 @@ type CarRepository interface {
 		ctx context.Context,
 		id uuid.UUID,
 		request api_models.UpdateCarRequest,
+		colorID *uuid.UUID,
+		shouldUpdateColor bool,
 	) (*db_models.Car, error)
 	DeleteRepository(
 		ctx context.Context,

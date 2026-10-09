@@ -74,23 +74,23 @@ func (r *BunCarRepository) UpdateRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateCarRequest,
+	colorID *uuid.UUID,
+	shouldUpdateColor bool,
 ) (*db_models.Car, error) {
-
 	car, err := r.GetByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-
 	if request.Name != nil {
 		car.Name = *request.Name
 	}
-
 	if request.Description != nil {
 		car.Description = request.Description
 	}
-
+	if shouldUpdateColor {
+		car.ColorID = colorID
+	}
 	car.UpdatedAt = time.Now().UTC()
-
 	_, err = db.BunDB.NewUpdate().
 		Model(car).
 		WherePK().
@@ -99,7 +99,6 @@ func (r *BunCarRepository) UpdateRepository(
 	if err != nil {
 		return nil, err
 	}
-
 	return car, nil
 }
 

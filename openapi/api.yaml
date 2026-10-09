@@ -242,6 +242,9 @@ components:
           type: string
           nullable: true
           maxLength: 1000
+        color:
+          $ref: "#/components/schemas/CarColor"
+          nullable: true
     UpdateCarRequest:
       type: object
 
@@ -253,7 +256,22 @@ components:
         description:
           type: string
           nullable: true
-          
+        color:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/CarColor"
+          description: |
+            Color update rules:
+            field omitted:
+              color is not changed
+            color: {}
+              clears current color
+            color.id:
+              uses existing color
+            color.code:
+              finds existing color by code or creates new one
+        
+         
     Color:
       type: object
       required:
@@ -274,7 +292,6 @@ components:
           type: string
           minLength: 2
           maxLength: 50
-
     UpdateColorRequest:
       type: object
       properties:
@@ -284,7 +301,27 @@ components:
           minLength: 2
           maxLength: 50
 
-
-
-
+    CarColor:
+      type: object
+      description: |
+        Color reference.
+        Resolution order:
+        1. id
+        2. code
+        Examples:
+        Existing color:
+          {
+            "id": "uuid"
+          }
+        Find or create by code:
+          {
+            "code": "red"
+          }
+        Clear color in PATCH:
+          {}
+      properties:
+        id:
+          type: string
+        code:
+          type: string
 

@@ -83,31 +83,51 @@ func CreateCarService(
 	ctx context.Context,
 	request api_models.CreateCarRequest,
 ) (*api_models.Car, error) {
-
 	validationResult := validation.ValidateCreateCarRequest(
 		request,
 	)
-
 	if validationResult.HasErrors() {
 		return nil, validationResult
 	}
-
+	var colorID *uuid.UUID
+	if request.Color != nil &&
+		!IsEmptyColor(request.Color) {
+		var err error
+		colorID, err = ResolveColorID(
+			ctx,
+			request.Color,
+		)
+		if err != nil {
+			return nil, err
+		}
+	}
 	repo := repositories.NewCarRepository()
-
 	car := &db_models.Car{
 		Name:        request.Name,
 		Description: request.Description,
+		ColorID:     colorID,
 	}
-
 	err := repo.CreateRepository(ctx, car)
 	if err != nil {
 		return nil, err
 	}
+	car, err = repo.GetByIDRepository(ctx, car.ID)
 
+	if err != nil {
+		return nil, err
+	}
+	var color *api_models.Color
+	if car.Color != nil {
+		color = &api_models.Color{
+			Id:   car.Color.ID.String(),
+			Code: car.Color.Code,
+		}
+	}
 	return &api_models.Car{
 		Id:          car.ID.String(),
 		Name:        car.Name,
 		Description: car.Description,
+		Color:       color,
 		CreatedAt:   car.CreatedAt,
 		UpdatedAt:   car.UpdatedAt,
 	}, nil
@@ -118,35 +138,59 @@ func UpdateCarService(
 	id string,
 	request api_models.UpdateCarRequest,
 ) (*api_models.Car, error) {
-
 	carID, err := uuid.Parse(id)
 	if err != nil {
 		return nil, err
 	}
-
 	validationResult := validation.ValidateUpdateCarRequest(
 		request,
 	)
-
 	if validationResult.HasErrors() {
 		return nil, validationResult
 	}
-
+	var (
+		colorID           *uuid.UUID
+		shouldUpdateColor bool
+	)
+	if request.Color != nil {
+		shouldUpdateColor = true
+		if !IsEmptyColor(request.Color) {
+			colorID, err = ResolveColorID(
+				ctx,
+				request.Color,
+			)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
 	repo := repositories.NewCarRepository()
-
 	car, err := repo.UpdateRepository(
 		ctx,
 		carID,
 		request,
+		colorID,
+		shouldUpdateColor,
 	)
 	if err != nil {
 		return nil, err
 	}
-
+	car, err = repo.GetByIDRepository(ctx, car.ID)
+	if err != nil {
+		return nil, err
+	}
+	var color *api_models.Color
+	if car.Color != nil {
+		color = &api_models.Color{
+			Id:   car.Color.ID.String(),
+			Code: car.Color.Code,
+		}
+	}
 	return &api_models.Car{
 		Id:          car.ID.String(),
 		Name:        car.Name,
 		Description: car.Description,
+		Color:       color,
 		CreatedAt:   car.CreatedAt,
 		UpdatedAt:   car.UpdatedAt,
 	}, nil
