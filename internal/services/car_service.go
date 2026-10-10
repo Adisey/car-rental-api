@@ -101,11 +101,24 @@ func CreateCarService(
 			return nil, err
 		}
 	}
+	var brandID *uuid.UUID
+	if request.Brand != nil &&
+		!IsEmptyBrand(request.Brand) {
+		var err error
+		brandID, err = ResolveBrandID(
+			ctx,
+			request.Brand,
+		)
+		if err != nil {
+			return nil, err
+		}
+	}
 	repo := repositories.NewCarRepository()
 	car := &db_models.Car{
 		Name:        request.Name,
 		Description: request.Description,
 		ColorID:     colorID,
+		BrandID:     brandID,
 	}
 	err := repo.CreateRepository(ctx, car)
 	if err != nil {
@@ -123,11 +136,19 @@ func CreateCarService(
 			Code: car.Color.Code,
 		}
 	}
+	var brand *api_models.Brand
+	if car.Brand != nil {
+		brand = &api_models.Brand{
+			Id:   car.Brand.ID.String(),
+			Name: car.Brand.Name,
+		}
+	}
 	return &api_models.Car{
 		Id:          car.ID.String(),
 		Name:        car.Name,
 		Description: car.Description,
 		Color:       color,
+		Brand:       brand,
 		CreatedAt:   car.CreatedAt,
 		UpdatedAt:   car.UpdatedAt,
 	}, nil
@@ -164,6 +185,22 @@ func UpdateCarService(
 			}
 		}
 	}
+	var (
+		brandID           *uuid.UUID
+		shouldUpdateBrand bool
+	)
+	if request.Brand != nil {
+		shouldUpdateBrand = true
+		if !IsEmptyBrand(request.Brand) {
+			brandID, err = ResolveBrandID(
+				ctx,
+				request.Brand,
+			)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
 	repo := repositories.NewCarRepository()
 	car, err := repo.UpdateRepository(
 		ctx,
@@ -171,6 +208,8 @@ func UpdateCarService(
 		request,
 		colorID,
 		shouldUpdateColor,
+		brandID,
+		shouldUpdateBrand,
 	)
 	if err != nil {
 		return nil, err
@@ -186,11 +225,19 @@ func UpdateCarService(
 			Code: car.Color.Code,
 		}
 	}
+	var brand *api_models.Brand
+	if car.Brand != nil {
+		brand = &api_models.Brand{
+			Id:   car.BrandID.String(),
+			Name: car.Brand.Name,
+		}
+	}
 	return &api_models.Car{
 		Id:          car.ID.String(),
 		Name:        car.Name,
 		Description: car.Description,
 		Color:       color,
+		Brand:       brand,
 		CreatedAt:   car.CreatedAt,
 		UpdatedAt:   car.UpdatedAt,
 	}, nil

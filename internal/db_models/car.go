@@ -15,6 +15,8 @@ type Car struct {
 	Description *string    `bun:"type:text"`
 	ColorID     *uuid.UUID `bun:"type:uuid"`
 	Color       *Color     `bun:"rel:belongs-to,join:color_id=id"`
+	BrandID     *uuid.UUID `bun:"type:uuid"`
+	Brand       *Brand     `bun:"rel:belongs-to,join:brand_id=id"`
 	CreatedAt   time.Time  `bun:",notnull,default:CURRENT_TIMESTAMP"`
 	UpdatedAt   time.Time  `bun:",notnull,default:CURRENT_TIMESTAMP"`
 	DeletedAt   *time.Time `bun:"type:timestamptz"`

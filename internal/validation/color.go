@@ -3,7 +3,7 @@ package validation
 import (
 	"strings"
 
-	api_models "github.com/Adisey/car-rental-api/internal/api_models"
+	"github.com/Adisey/car-rental-api/internal/api_models"
 )
 
 var ColorRules = struct {

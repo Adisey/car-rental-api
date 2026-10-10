@@ -52,7 +52,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Car"
-
   /cars/{id}:
     get:
       operationId: getCarById
@@ -137,7 +136,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Color"
-
   /colors/{id}:
     get:
       operationId: getColorById
@@ -179,6 +177,78 @@ paths:
                 $ref: "#/components/schemas/Color"
         "404":
           description: Color not found
+
+  /brands:
+    get:
+      operationId: getBrands
+      responses:
+        "200":
+          description: Brands list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Brand"
+    post:
+      operationId: createBrand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBrandRequest"
+      responses:
+        "201":
+          description: Brand created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+  /brand/{id}:
+    get:
+      operationId: getBrandById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Brand
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "404":
+          description: Brand not found
+    patch:
+      operationId: updateBrand
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBrandRequest"
+      responses:
+        "200":
+          description: Updated brand
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "404":
+          description: Color not found
+
+
+
 
 
 components:
@@ -223,6 +293,10 @@ components:
           allOf:
             - $ref: "#/components/schemas/Color"
           nullable: true
+        brand:
+          allOf:
+            - $ref: "#/components/schemas/Brand"
+          nullable: true
         created_at:
           type: string
           format: date-time
@@ -244,6 +318,9 @@ components:
           maxLength: 1000
         color:
           $ref: "#/components/schemas/CarColor"
+          nullable: true
+        brand:
+          $ref: "#/components/schemas/CarBrand"
           nullable: true
     UpdateCarRequest:
       type: object
@@ -270,7 +347,20 @@ components:
               uses existing color
             color.code:
               finds existing color by code or creates new one
-        
+        brand:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/CarBrand"
+          description: |
+            Brand update rules:
+            field omitted:
+              brand is not changed
+            brand: {}
+              clears current brand
+            brand.id:
+              uses existing brand
+            brand.name:
+              finds existing brand by name or creates new one
          
     Color:
       type: object
@@ -280,7 +370,6 @@ components:
       properties:
         id:
           type: string
-
         code:
           type: string
     CreateColorRequest:
@@ -300,7 +389,6 @@ components:
           nullable: true
           minLength: 2
           maxLength: 50
-
     CarColor:
       type: object
       description: |
@@ -325,3 +413,55 @@ components:
         code:
           type: string
 
+    Brand:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+    CreateBrandRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100      
+    UpdateBrandRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          nullable: true
+    CarBrand:
+      type: object
+      description: |
+        Brand reference.
+        Resolution order:
+        1. id
+        2. name
+        Examples:
+        Existing name:
+          {
+            "id": "uuid"
+          }
+        Find or create by name:
+          {
+            "name": "BMW"
+          }
+        Clear brand in PATCH:
+          {}
+      properties:
+        id:
+          type: string
+        name:
+          type: string

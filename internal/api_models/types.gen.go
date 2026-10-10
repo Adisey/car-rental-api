@@ -7,14 +7,46 @@ import (
 	"time"
 )
 
+// Brand defines model for Brand.
+type Brand struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}
+
 // Car defines model for Car.
 type Car struct {
+	Brand       *Brand    `json:"brand,omitempty"`
 	Color       *Color    `json:"color,omitempty"`
 	CreatedAt   time.Time `json:"created_at"`
 	Description *string   `json:"description,omitempty"`
 	Id          string    `json:"id"`
 	Name        string    `json:"name"`
 	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// CarBrand Brand reference.
+// Resolution order:
+// 1. id
+// 2. name
+// Examples:
+// Existing name:
+//
+//	{
+//	  "id": "uuid"
+//	}
+//
+// Find or create by name:
+//
+//	{
+//	  "name": "BMW"
+//	}
+//
+// Clear brand in PATCH:
+//
+//	{}
+type CarBrand struct {
+	Id   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
 }
 
 // CarColor Color reference.
@@ -48,8 +80,30 @@ type Color struct {
 	Id   string `json:"id"`
 }
 
+// CreateBrandRequest defines model for CreateBrandRequest.
+type CreateBrandRequest struct {
+	Name string `json:"name"`
+}
+
 // CreateCarRequest defines model for CreateCarRequest.
 type CreateCarRequest struct {
+	// Brand Brand reference.
+	// Resolution order:
+	// 1. id
+	// 2. name
+	// Examples:
+	// Existing name:
+	//   {
+	//     "id": "uuid"
+	//   }
+	// Find or create by name:
+	//   {
+	//     "name": "BMW"
+	//   }
+	// Clear brand in PATCH:
+	//   {}
+	Brand *CarBrand `json:"brand,omitempty"`
+
 	// Color Color reference.
 	// Resolution order:
 	// 1. id
@@ -87,8 +141,24 @@ type HealthResponse struct {
 	Version string `json:"version"`
 }
 
+// UpdateBrandRequest defines model for UpdateBrandRequest.
+type UpdateBrandRequest struct {
+	Name *string `json:"name,omitempty"`
+}
+
 // UpdateCarRequest defines model for UpdateCarRequest.
 type UpdateCarRequest struct {
+	// Brand Brand update rules:
+	// field omitted:
+	//   brand is not changed
+	// brand: {}
+	//   clears current brand
+	// brand.id:
+	//   uses existing brand
+	// brand.name:
+	//   finds existing brand by name or creates new one
+	Brand *CarBrand `json:"brand,omitempty"`
+
 	// Color Color update rules:
 	// field omitted:
 	//   color is not changed
@@ -107,6 +177,12 @@ type UpdateCarRequest struct {
 type UpdateColorRequest struct {
 	Code *string `json:"code,omitempty"`
 }
+
+// UpdateBrandJSONRequestBody defines body for UpdateBrand for application/json ContentType.
+type UpdateBrandJSONRequestBody = UpdateBrandRequest
+
+// CreateBrandJSONRequestBody defines body for CreateBrand for application/json ContentType.
+type CreateBrandJSONRequestBody = CreateBrandRequest
 
 // CreateCarJSONRequestBody defines body for CreateCar for application/json ContentType.
 type CreateCarJSONRequestBody = CreateCarRequest

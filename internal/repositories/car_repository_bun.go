@@ -27,6 +27,7 @@ func (r *BunCarRepository) GetAll(ctx context.Context) ([]db_models.Car, error) 
 	err := db.BunDB.NewSelect().
 		Model(&cars).
 		Relation("Color").
+		Relation("Brand").
 		Where("deleted_at IS NULL").
 		Scan(ctx)
 
@@ -43,6 +44,7 @@ func (r *BunCarRepository) GetByIDRepository(
 	err := db.BunDB.NewSelect().
 		Model(car).
 		Relation("Color").
+		Relation("Brand").
 		Where("car.id = ?", id).
 		Where("deleted_at IS NULL").
 		Scan(ctx)
@@ -76,6 +78,8 @@ func (r *BunCarRepository) UpdateRepository(
 	request api_models.UpdateCarRequest,
 	colorID *uuid.UUID,
 	shouldUpdateColor bool,
+	brandID *uuid.UUID,
+	shouldUpdateBrand bool,
 ) (*db_models.Car, error) {
 	car, err := r.GetByIDRepository(ctx, id)
 	if err != nil {
@@ -89,6 +93,9 @@ func (r *BunCarRepository) UpdateRepository(
 	}
 	if shouldUpdateColor {
 		car.ColorID = colorID
+	}
+	if shouldUpdateBrand {
+		car.BrandID = brandID
 	}
 	car.UpdatedAt = time.Now().UTC()
 	_, err = db.BunDB.NewUpdate().
