@@ -16,6 +16,7 @@ func main() {
 		&db_models.Car{},
 		&db_models.Color{},
 		&db_models.Brand{},
+		&db_models.Model{},
 	)
 
 	if err != nil {

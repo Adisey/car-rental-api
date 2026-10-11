@@ -13,21 +13,45 @@ import (
 
 func GetCarsService(ctx context.Context) ([]api_models.Car, error) {
 	repo := repositories.NewCarRepository()
-
 	dbCars, err := repo.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
-
 	cars := make([]api_models.Car, 0, len(dbCars))
-
 	for _, car := range dbCars {
-
-		var color *api_models.Color
+		var color *api_models.CodeReference
 		if car.Color != nil {
-			color = &api_models.Color{
-				Id:   car.Color.ID.String(),
-				Code: car.Color.Code,
+			colorID := car.Color.ID.String()
+			colorCode := car.Color.Code
+
+			color = &api_models.CodeReference{
+				Id:   &colorID,
+				Code: &colorCode,
+			}
+		}
+		var brand *api_models.NameReference
+		if car.Brand != nil {
+			brandID := car.Brand.ID.String()
+			brandCode := car.Brand.Name
+			brand = &api_models.NameReference{
+				Id:   &brandID,
+				Name: &brandCode,
+			}
+		}
+		var model *api_models.Model
+		if car.Model != nil {
+			modelID := car.Model.ID.String()
+			modelCode := car.Model.Name
+			brandID := car.Model.Brand.ID.String()
+			brandCode := car.Model.Brand.Name
+			brand = &api_models.NameReference{
+				Id:   &brandID,
+				Name: &brandCode,
+			}
+			model = &api_models.Model{
+				Id:    modelID,
+				Name:  modelCode,
+				Brand: brand,
 			}
 		}
 
@@ -36,11 +60,12 @@ func GetCarsService(ctx context.Context) ([]api_models.Car, error) {
 			Name:        car.Name,
 			Description: car.Description,
 			Color:       color,
+			Brand:       brand,
+			Model:       model,
 			CreatedAt:   car.CreatedAt,
 			UpdatedAt:   car.UpdatedAt,
 		})
 	}
-
 	return cars, nil
 }
 
@@ -49,23 +74,46 @@ func GetCarByIDService(
 	id string,
 ) (*api_models.Car, error) {
 	repo := repositories.NewCarRepository()
-
 	carID, err := uuid.Parse(id)
 	if err != nil {
 		return nil, err
 	}
-
 	dbCar, err := repo.GetByIDRepository(ctx, carID)
 	if err != nil {
 		return nil, err
 	}
-
-	var color *api_models.Color
-
+	var color *api_models.CodeReference
 	if dbCar.Color != nil {
-		color = &api_models.Color{
-			Id:   dbCar.Color.ID.String(),
-			Code: dbCar.Color.Code,
+		colorID := dbCar.Color.ID.String()
+		colorCode := dbCar.Color.Code
+		color = &api_models.CodeReference{
+			Id:   &colorID,
+			Code: &colorCode,
+		}
+	}
+	var brand *api_models.NameReference
+	if dbCar.Brand != nil {
+		brandID := dbCar.Brand.ID.String()
+		brandCode := dbCar.Brand.Name
+		brand = &api_models.NameReference{
+			Id:   &brandID,
+			Name: &brandCode,
+		}
+	}
+	var model *api_models.Model
+	if dbCar.Model != nil {
+		modelID := dbCar.Model.ID.String()
+		modelCode := dbCar.Model.Name
+		brandID := dbCar.Model.Brand.ID.String()
+		brandCode := dbCar.Model.Brand.Name
+		brand = &api_models.NameReference{
+			Id:   &brandID,
+			Name: &brandCode,
+		}
+		model = &api_models.Model{
+			Id:    modelID,
+			Name:  modelCode,
+			Brand: brand,
 		}
 	}
 
@@ -74,6 +122,8 @@ func GetCarByIDService(
 		Name:        dbCar.Name,
 		Description: dbCar.Description,
 		Color:       color,
+		Brand:       brand,
+		Model:       model,
 		CreatedAt:   dbCar.CreatedAt,
 		UpdatedAt:   dbCar.UpdatedAt,
 	}, nil
@@ -113,12 +163,34 @@ func CreateCarService(
 			return nil, err
 		}
 	}
+	var modelID *uuid.UUID
+	if request.Model != nil {
+		model := request.Model
+		if model.Brand == nil &&
+			brandID != nil {
+			brandIDString := brandID.String()
+			model.Brand = &api_models.NameReference{
+				Id: &brandIDString,
+			}
+		}
+		if !IsEmptyModel(model) {
+			var err error
+			modelID, err = ResolveModelID(
+				ctx,
+				model,
+			)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
 	repo := repositories.NewCarRepository()
 	car := &db_models.Car{
 		Name:        request.Name,
 		Description: request.Description,
 		ColorID:     colorID,
 		BrandID:     brandID,
+		ModelID:     modelID,
 	}
 	err := repo.CreateRepository(ctx, car)
 	if err != nil {
@@ -129,18 +201,41 @@ func CreateCarService(
 	if err != nil {
 		return nil, err
 	}
-	var color *api_models.Color
+	var color *api_models.CodeReference
 	if car.Color != nil {
-		color = &api_models.Color{
-			Id:   car.Color.ID.String(),
-			Code: car.Color.Code,
+		colorID := car.Color.ID.String()
+		colorCode := car.Color.Code
+		color = &api_models.CodeReference{
+			Id:   &colorID,
+			Code: &colorCode,
 		}
 	}
-	var brand *api_models.Brand
+	var brand *api_models.NameReference
 	if car.Brand != nil {
-		brand = &api_models.Brand{
-			Id:   car.Brand.ID.String(),
-			Name: car.Brand.Name,
+		brandID := car.Brand.ID.String()
+		brandName := car.Brand.Name
+		brand = &api_models.NameReference{
+			Id:   &brandID,
+			Name: &brandName,
+		}
+	}
+	var model *api_models.Model
+	if car.Model != nil {
+		var modelBrand *api_models.NameReference
+		if car.Model.Brand != nil {
+			brandID := car.Model.Brand.ID.String()
+			brandName := car.Model.Brand.Name
+			modelBrand = &api_models.NameReference{
+				Id:   &brandID,
+				Name: &brandName,
+			}
+		}
+		newModelID := car.Model.ID.String()
+		newModelName := car.Model.Name
+		model = &api_models.Model{
+			Id:    newModelID,
+			Name:  newModelName,
+			Brand: modelBrand,
 		}
 	}
 	return &api_models.Car{
@@ -149,6 +244,7 @@ func CreateCarService(
 		Description: car.Description,
 		Color:       color,
 		Brand:       brand,
+		Model:       model,
 		CreatedAt:   car.CreatedAt,
 		UpdatedAt:   car.UpdatedAt,
 	}, nil
@@ -201,6 +297,31 @@ func UpdateCarService(
 			}
 		}
 	}
+	var (
+		modelID           *uuid.UUID
+		shouldUpdateModel bool
+	)
+	if request.Model != nil {
+		shouldUpdateModel = true
+		model := request.Model
+		if model.Brand == nil &&
+			brandID != nil {
+			brandIDString := brandID.String()
+			model.Brand = &api_models.NameReference{
+				Id: &brandIDString,
+			}
+		}
+		if !IsEmptyModel(model) {
+			var err error
+			modelID, err = ResolveModelID(
+				ctx,
+				model,
+			)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
 	repo := repositories.NewCarRepository()
 	car, err := repo.UpdateRepository(
 		ctx,
@@ -210,6 +331,8 @@ func UpdateCarService(
 		shouldUpdateColor,
 		brandID,
 		shouldUpdateBrand,
+		modelID,
+		shouldUpdateModel,
 	)
 	if err != nil {
 		return nil, err
@@ -218,18 +341,41 @@ func UpdateCarService(
 	if err != nil {
 		return nil, err
 	}
-	var color *api_models.Color
+	var color *api_models.CodeReference
 	if car.Color != nil {
-		color = &api_models.Color{
-			Id:   car.Color.ID.String(),
-			Code: car.Color.Code,
+		colorID := car.Color.ID.String()
+		colorCode := car.Color.Code
+		color = &api_models.CodeReference{
+			Id:   &colorID,
+			Code: &colorCode,
 		}
 	}
-	var brand *api_models.Brand
+	var brand *api_models.NameReference
 	if car.Brand != nil {
-		brand = &api_models.Brand{
-			Id:   car.BrandID.String(),
-			Name: car.Brand.Name,
+		brandID := car.Brand.ID.String()
+		brandName := car.Brand.Name
+		brand = &api_models.NameReference{
+			Id:   &brandID,
+			Name: &brandName,
+		}
+	}
+	var model *api_models.Model
+	if car.Model != nil {
+		var modelBrand *api_models.NameReference
+		if car.Model.Brand != nil {
+			brandID := car.Model.Brand.ID.String()
+			brandName := car.Model.Brand.Name
+			modelBrand = &api_models.NameReference{
+				Id:   &brandID,
+				Name: &brandName,
+			}
+		}
+		newModelID := car.Model.ID.String()
+		newModelName := car.Model.Name
+		model = &api_models.Model{
+			Id:    newModelID,
+			Name:  newModelName,
+			Brand: modelBrand,
 		}
 	}
 	return &api_models.Car{
@@ -238,6 +384,7 @@ func UpdateCarService(
 		Description: car.Description,
 		Color:       color,
 		Brand:       brand,
+		Model:       model,
 		CreatedAt:   car.CreatedAt,
 		UpdatedAt:   car.UpdatedAt,
 	}, nil

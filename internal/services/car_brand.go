@@ -11,7 +11,7 @@ import (
 	"github.com/Adisey/car-rental-api/internal/validation"
 )
 
-func IsEmptyBrand(brand *api_models.CarBrand) bool {
+func IsEmptyBrand(brand *api_models.NameReference) bool {
 	return brand != nil &&
 		brand.Id == nil &&
 		brand.Name == nil
@@ -19,7 +19,7 @@ func IsEmptyBrand(brand *api_models.CarBrand) bool {
 
 func ResolveBrandID(
 	ctx context.Context,
-	brand *api_models.CarBrand,
+	brand *api_models.NameReference,
 ) (*uuid.UUID, error) {
 	if brand == nil {
 		return nil, nil

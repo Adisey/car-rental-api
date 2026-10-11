@@ -247,8 +247,82 @@ paths:
         "404":
           description: Color not found
 
+  /models:
+    get:
+      operationId: getModels
+      parameters:
+        - name: brandId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Models list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Model"
+    post:
+      operationId: createModel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateModelRequest"
+      responses:
+        "201":
+          description: Model created
 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Model"
+  /models/{id}:
+    get:
+      operationId: getModelById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Model
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Model"
+        "404":
+          description: Model not found
+    patch:
+      operationId: updateModel
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
 
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateModelRequest"
+      responses:
+        "200":
+          description: Updated model
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Model"
+        "404":
+          description: Model not found
 
 
 components:
@@ -271,6 +345,51 @@ components:
           type: string
           example: ok
 
+    NameReference:
+      type: object
+      description: |
+        Resolution order:
+        1. id
+        2. name
+        Examples:
+        Existing name:
+          {
+            "id": "uuid"
+          }
+        Find or create by name:
+          {
+            "name": "New Name"
+          }
+        Clear brand in PATCH:
+          {}
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    CodeReference:
+      type: object
+      description: |
+        Resolution order:
+        1. id
+        2. code
+        Examples:
+        Existing name:
+          {
+            "id": "uuid"
+          }
+        Find or create by name:
+          {
+            "code": "New Code"
+          }
+        Clear brand in PATCH:
+          {}
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+
     Car:
       type: object
       required:
@@ -291,11 +410,15 @@ components:
           maxLength: 1000
         color:
           allOf:
-            - $ref: "#/components/schemas/Color"
+            - $ref: "#/components/schemas/CodeReference"
           nullable: true
         brand:
           allOf:
-            - $ref: "#/components/schemas/Brand"
+            - $ref: "#/components/schemas/NameReference"
+          nullable: true
+        model:
+          allOf:
+            - $ref: "#/components/schemas/Model"
           nullable: true
         created_at:
           type: string
@@ -317,10 +440,16 @@ components:
           nullable: true
           maxLength: 1000
         color:
-          $ref: "#/components/schemas/CarColor"
+          allOf:
+            - $ref:  "#/components/schemas/CodeReference"
           nullable: true
         brand:
-          $ref: "#/components/schemas/CarBrand"
+          allOf:
+            - $ref: "#/components/schemas/NameReference"
+          nullable: true
+        model:
+          allOf:
+            - $ref: "#/components/schemas/CarModel"
           nullable: true
     UpdateCarRequest:
       type: object
@@ -336,7 +465,7 @@ components:
         color:
           nullable: true
           allOf:
-            - $ref: "#/components/schemas/CarColor"
+            - $ref: "#/components/schemas/CodeReference"
           description: |
             Color update rules:
             field omitted:
@@ -350,7 +479,7 @@ components:
         brand:
           nullable: true
           allOf:
-            - $ref: "#/components/schemas/CarBrand"
+            - $ref: "#/components/schemas/NameReference"
           description: |
             Brand update rules:
             field omitted:
@@ -361,7 +490,10 @@ components:
               uses existing brand
             brand.name:
               finds existing brand by name or creates new one
-         
+        model:
+          $ref: "#/components/schemas/CarModel"
+          nullable: true
+        
     Color:
       type: object
       required:
@@ -389,29 +521,6 @@ components:
           nullable: true
           minLength: 2
           maxLength: 50
-    CarColor:
-      type: object
-      description: |
-        Color reference.
-        Resolution order:
-        1. id
-        2. code
-        Examples:
-        Existing color:
-          {
-            "id": "uuid"
-          }
-        Find or create by code:
-          {
-            "code": "red"
-          }
-        Clear color in PATCH:
-          {}
-      properties:
-        id:
-          type: string
-        code:
-          type: string
 
     Brand:
       type: object
@@ -442,10 +551,52 @@ components:
           minLength: 2
           maxLength: 100
           nullable: true
-    CarBrand:
+    
+    Model:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        brand:
+          allOf:
+            - $ref: "#/components/schemas/NameReference"
+          nullable: true
+    CreateModelRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        brand:
+          allOf:
+            - $ref: "#/components/schemas/NameReference"
+          nullable: true
+    UpdateModelRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          nullable: true
+        brand:
+          allOf:
+            - $ref: "#/components/schemas/NameReference"
+          nullable: true
+    CarModel:
       type: object
       description: |
-        Brand reference.
+        Model reference.
         Resolution order:
         1. id
         2. name
@@ -456,12 +607,19 @@ components:
           }
         Find or create by name:
           {
-            "name": "BMW"
+            "name": "X6"
           }
-        Clear brand in PATCH:
+        Clear model in PATCH:
           {}
       properties:
         id:
           type: string
         name:
           type: string
+        brand:
+          allOf:
+            - $ref: "#/components/schemas/NameReference"
+          nullable: true
+
+
+

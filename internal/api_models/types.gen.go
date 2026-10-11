@@ -15,16 +15,17 @@ type Brand struct {
 
 // Car defines model for Car.
 type Car struct {
-	Brand       *Brand    `json:"brand,omitempty"`
-	Color       *Color    `json:"color,omitempty"`
-	CreatedAt   time.Time `json:"created_at"`
-	Description *string   `json:"description,omitempty"`
-	Id          string    `json:"id"`
-	Name        string    `json:"name"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	Brand       *NameReference `json:"brand,omitempty"`
+	Color       *CodeReference `json:"color,omitempty"`
+	CreatedAt   time.Time      `json:"created_at"`
+	Description *string        `json:"description,omitempty"`
+	Id          string         `json:"id"`
+	Model       *Model         `json:"model,omitempty"`
+	Name        string         `json:"name"`
+	UpdatedAt   time.Time      `json:"updated_at"`
 }
 
-// CarBrand Brand reference.
+// CarModel Model reference.
 // Resolution order:
 // 1. id
 // 2. name
@@ -38,38 +39,38 @@ type Car struct {
 // Find or create by name:
 //
 //	{
-//	  "name": "BMW"
+//	  "name": "X6"
 //	}
 //
-// Clear brand in PATCH:
+// Clear model in PATCH:
 //
 //	{}
-type CarBrand struct {
-	Id   *string `json:"id,omitempty"`
-	Name *string `json:"name,omitempty"`
+type CarModel struct {
+	Brand *NameReference `json:"brand,omitempty"`
+	Id    *string        `json:"id,omitempty"`
+	Name  *string        `json:"name,omitempty"`
 }
 
-// CarColor Color reference.
-// Resolution order:
+// CodeReference Resolution order:
 // 1. id
 // 2. code
 // Examples:
-// Existing color:
+// Existing name:
 //
 //	{
 //	  "id": "uuid"
 //	}
 //
-// Find or create by code:
+// Find or create by name:
 //
 //	{
-//	  "code": "red"
+//	  "code": "New Code"
 //	}
 //
-// Clear color in PATCH:
+// Clear brand in PATCH:
 //
 //	{}
-type CarColor struct {
+type CodeReference struct {
 	Code *string `json:"code,omitempty"`
 	Id   *string `json:"id,omitempty"`
 }
@@ -87,46 +88,22 @@ type CreateBrandRequest struct {
 
 // CreateCarRequest defines model for CreateCarRequest.
 type CreateCarRequest struct {
-	// Brand Brand reference.
-	// Resolution order:
-	// 1. id
-	// 2. name
-	// Examples:
-	// Existing name:
-	//   {
-	//     "id": "uuid"
-	//   }
-	// Find or create by name:
-	//   {
-	//     "name": "BMW"
-	//   }
-	// Clear brand in PATCH:
-	//   {}
-	Brand *CarBrand `json:"brand,omitempty"`
-
-	// Color Color reference.
-	// Resolution order:
-	// 1. id
-	// 2. code
-	// Examples:
-	// Existing color:
-	//   {
-	//     "id": "uuid"
-	//   }
-	// Find or create by code:
-	//   {
-	//     "code": "red"
-	//   }
-	// Clear color in PATCH:
-	//   {}
-	Color       *CarColor `json:"color,omitempty"`
-	Description *string   `json:"description,omitempty"`
-	Name        string    `json:"name"`
+	Brand       *NameReference `json:"brand,omitempty"`
+	Color       *CodeReference `json:"color,omitempty"`
+	Description *string        `json:"description,omitempty"`
+	Model       *CarModel      `json:"model,omitempty"`
+	Name        string         `json:"name"`
 }
 
 // CreateColorRequest defines model for CreateColorRequest.
 type CreateColorRequest struct {
 	Code string `json:"code"`
+}
+
+// CreateModelRequest defines model for CreateModelRequest.
+type CreateModelRequest struct {
+	Brand *NameReference `json:"brand,omitempty"`
+	Name  string         `json:"name"`
 }
 
 // HealthResponse defines model for HealthResponse.
@@ -139,6 +116,37 @@ type HealthResponse struct {
 
 	// Version Example: 1.0.6
 	Version string `json:"version"`
+}
+
+// Model defines model for Model.
+type Model struct {
+	Brand *NameReference `json:"brand,omitempty"`
+	Id    string         `json:"id"`
+	Name  string         `json:"name"`
+}
+
+// NameReference Resolution order:
+// 1. id
+// 2. name
+// Examples:
+// Existing name:
+//
+//	{
+//	  "id": "uuid"
+//	}
+//
+// Find or create by name:
+//
+//	{
+//	  "name": "New Name"
+//	}
+//
+// Clear brand in PATCH:
+//
+//	{}
+type NameReference struct {
+	Id   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
 }
 
 // UpdateBrandRequest defines model for UpdateBrandRequest.
@@ -157,7 +165,7 @@ type UpdateCarRequest struct {
 	//   uses existing brand
 	// brand.name:
 	//   finds existing brand by name or creates new one
-	Brand *CarBrand `json:"brand,omitempty"`
+	Brand *NameReference `json:"brand,omitempty"`
 
 	// Color Color update rules:
 	// field omitted:
@@ -168,14 +176,42 @@ type UpdateCarRequest struct {
 	//   uses existing color
 	// color.code:
 	//   finds existing color by code or creates new one
-	Color       *CarColor `json:"color,omitempty"`
-	Description *string   `json:"description,omitempty"`
-	Name        *string   `json:"name,omitempty"`
+	Color       *CodeReference `json:"color,omitempty"`
+	Description *string        `json:"description,omitempty"`
+
+	// Model Model reference.
+	// Resolution order:
+	// 1. id
+	// 2. name
+	// Examples:
+	// Existing name:
+	//   {
+	//     "id": "uuid"
+	//   }
+	// Find or create by name:
+	//   {
+	//     "name": "X6"
+	//   }
+	// Clear model in PATCH:
+	//   {}
+	Model *CarModel `json:"model,omitempty"`
+	Name  *string   `json:"name,omitempty"`
 }
 
 // UpdateColorRequest defines model for UpdateColorRequest.
 type UpdateColorRequest struct {
 	Code *string `json:"code,omitempty"`
+}
+
+// UpdateModelRequest defines model for UpdateModelRequest.
+type UpdateModelRequest struct {
+	Brand *NameReference `json:"brand,omitempty"`
+	Name  *string        `json:"name,omitempty"`
+}
+
+// GetModelsParams defines parameters for GetModels.
+type GetModelsParams struct {
+	BrandId *string `form:"brandId,omitempty" json:"brandId,omitempty"`
 }
 
 // UpdateBrandJSONRequestBody defines body for UpdateBrand for application/json ContentType.
@@ -195,3 +231,9 @@ type CreateColorJSONRequestBody = CreateColorRequest
 
 // UpdateColorJSONRequestBody defines body for UpdateColor for application/json ContentType.
 type UpdateColorJSONRequestBody = UpdateColorRequest
+
+// CreateModelJSONRequestBody defines body for CreateModel for application/json ContentType.
+type CreateModelJSONRequestBody = CreateModelRequest
+
+// UpdateModelJSONRequestBody defines body for UpdateModel for application/json ContentType.
+type UpdateModelJSONRequestBody = UpdateModelRequest

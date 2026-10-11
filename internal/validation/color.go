@@ -81,6 +81,17 @@ func ValidateUpdateColorRequest(
 				},
 			)
 		}
+
+		if len(code) > ColorRules.Code.MaxLength {
+			result.Add(
+				"name",
+				"max_length",
+				map[string]any{
+					"max": ColorRules.Code.MaxLength,
+				},
+			)
+		}
+
 	}
 
 	return result

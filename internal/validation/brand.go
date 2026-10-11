@@ -7,8 +7,7 @@ import (
 )
 
 var BrandRules = struct {
-	Name        StringRule
-	Description StringRule
+	Name StringRule
 }{
 	Name: StringRule{
 		MinLength: 2,
@@ -81,6 +80,17 @@ func ValidateUpdateBrandRequest(
 				},
 			)
 		}
+
+		if len(name) > BrandRules.Name.MaxLength {
+			result.Add(
+				"name",
+				"max_length",
+				map[string]any{
+					"max": BrandRules.Name.MaxLength,
+				},
+			)
+		}
+
 	}
 
 	return result

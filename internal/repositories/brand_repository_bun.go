@@ -89,14 +89,14 @@ func (r *BunBrandRepository) UpdateRepository(
 
 func (r *BunBrandRepository) GetByNameRepository(
 	ctx context.Context,
-	code string,
+	name string,
 ) (*db_models.Brand, error) {
 
 	brand := new(db_models.Brand)
 
 	err := db.BunDB.NewSelect().
 		Model(brand).
-		Where("name = ?", code).
+		Where("LOWER(name) = LOWER(?)", name).
 		Scan(ctx)
 
 	if errors.Is(err, sql.ErrNoRows) {

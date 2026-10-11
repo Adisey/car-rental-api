@@ -96,7 +96,7 @@ func (r *BunColorRepository) GetByCodeRepository(
 
 	err := db.BunDB.NewSelect().
 		Model(color).
-		Where("code = ?", code).
+		Where("LOWER(code) = LOWER(?)", code).
 		Scan(ctx)
 
 	if errors.Is(err, sql.ErrNoRows) {

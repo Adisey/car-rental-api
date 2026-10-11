@@ -157,7 +157,7 @@ Brand Brand `bun:"rel:belongs-to,join:brand_id=id"`
 
 Пример:
 
-```go
+````go
 ty*e Car struct {
 	bun.BaseModel `bun*"table:cars"`
 
@@ -176,19 +176,19 @@ ty*e Car struct {
 
 ---
 
-# 5. Зарегистрировать модел* Brand в генераторе схем
+# 5. Зарегистрировать модель Brand в генераторе схем
 
 Файл:
 
-`*`text
+```text
 cmd/schema/main.go
-```
+````
 
-Доба\*ить:
+Добавить:
 
-````go
+```go
 &db_models.Brand{},
-``*
+```
 
 в список моделей.
 
@@ -196,23 +196,23 @@ cmd/schema/main.go
 
 # 6. Сгенерировать актуальную схему
 
-Запуст*ть:
+Запустить:
 
 ```bash
 go run ./cmd/schema >*db/schema/schema.sql
-````
+```
 
-Проверит\*:
+Проверить:
 
-````sql
+```sql
 CREATE TABLE "brands"
-``*
+```
 
 и
 
 ```sql
 CONSTRAINT "idx_brands*name" UNIQUE ("name")
-````
+```
 
 Провери*ь, что в таблице `cars` появились:*
 
@@ -304,7 +304,9 @@ VALUES
 
 ## Если осознанно менял миграции вручную, то нужно пересчитать контрольные суммы:
 
+```bash
 ./cmd/schema/atlas.sh migrate hash --env local
+```
 
 ---
 
