@@ -7,11 +7,14 @@ import (
 	"time"
 )
 
-// Brand defines model for Brand.
-type Brand struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+// AuditableEntity defines model for AuditableEntity.
+type AuditableEntity struct {
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
+
+// Brand defines model for Brand.
+type Brand = NameEntity
 
 // Car defines model for Car.
 type Car struct {
@@ -51,6 +54,12 @@ type CarModel struct {
 	Name  *string        `json:"name,omitempty"`
 }
 
+// CodeEntity defines model for CodeEntity.
+type CodeEntity struct {
+	Code string `json:"code"`
+	Id   string `json:"id"`
+}
+
 // CodeReference Resolution order:
 // 1. id
 // 2. code
@@ -77,14 +86,13 @@ type CodeReference struct {
 
 // Color defines model for Color.
 type Color struct {
-	Code string `json:"code"`
-	Id   string `json:"id"`
+	Code string  `json:"code"`
+	Hex  *string `json:"hex,omitempty"`
+	Id   string  `json:"id"`
 }
 
 // CreateBrandRequest defines model for CreateBrandRequest.
-type CreateBrandRequest struct {
-	Name string `json:"name"`
-}
+type CreateBrandRequest = CreateNameEntityRequest
 
 // CreateCarRequest defines model for CreateCarRequest.
 type CreateCarRequest struct {
@@ -95,15 +103,26 @@ type CreateCarRequest struct {
 	Name        string         `json:"name"`
 }
 
+// CreateCodeEntityRequest defines model for CreateCodeEntityRequest.
+type CreateCodeEntityRequest struct {
+	Code string `json:"code"`
+}
+
 // CreateColorRequest defines model for CreateColorRequest.
 type CreateColorRequest struct {
-	Code string `json:"code"`
+	Code string  `json:"code"`
+	Hex  *string `json:"hex,omitempty"`
 }
 
 // CreateModelRequest defines model for CreateModelRequest.
 type CreateModelRequest struct {
 	Brand *NameReference `json:"brand,omitempty"`
 	Name  string         `json:"name"`
+}
+
+// CreateNameEntityRequest defines model for CreateNameEntityRequest.
+type CreateNameEntityRequest struct {
+	Name string `json:"name"`
 }
 
 // HealthResponse defines model for HealthResponse.
@@ -123,6 +142,12 @@ type Model struct {
 	Brand *NameReference `json:"brand,omitempty"`
 	Id    string         `json:"id"`
 	Name  string         `json:"name"`
+}
+
+// NameEntity defines model for NameEntity.
+type NameEntity struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
 
 // NameReference Resolution order:
@@ -150,9 +175,7 @@ type NameReference struct {
 }
 
 // UpdateBrandRequest defines model for UpdateBrandRequest.
-type UpdateBrandRequest struct {
-	Name *string `json:"name,omitempty"`
-}
+type UpdateBrandRequest = UpdateNameEntityRequest
 
 // UpdateCarRequest defines model for UpdateCarRequest.
 type UpdateCarRequest struct {
@@ -198,15 +221,26 @@ type UpdateCarRequest struct {
 	Name  *string   `json:"name,omitempty"`
 }
 
+// UpdateCodeEntityRequest defines model for UpdateCodeEntityRequest.
+type UpdateCodeEntityRequest struct {
+	Code *string `json:"code,omitempty"`
+}
+
 // UpdateColorRequest defines model for UpdateColorRequest.
 type UpdateColorRequest struct {
 	Code *string `json:"code,omitempty"`
+	Hex  *string `json:"hex,omitempty"`
 }
 
 // UpdateModelRequest defines model for UpdateModelRequest.
 type UpdateModelRequest struct {
 	Brand *NameReference `json:"brand,omitempty"`
 	Name  *string        `json:"name,omitempty"`
+}
+
+// UpdateNameEntityRequest defines model for UpdateNameEntityRequest.
+type UpdateNameEntityRequest struct {
+	Name *string `json:"name,omitempty"`
 }
 
 // GetModelsParams defines parameters for GetModels.
