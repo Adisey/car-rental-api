@@ -15,6 +15,9 @@ type Car struct {
 	Description *string    `bun:"type:text"`
 	ColorID     *uuid.UUID `bun:"type:uuid"`
 	Color       *Color     `bun:"rel:belongs-to,join:color_id=id"`
+	BodyTypeID  *uuid.UUID `bun:"type:uuid"`
+	BodyType    *BodyType  `bun:"rel:belongs-to,join:body_type_id=id"`
+	PowerHp     *string    `bun:"type:integer"`
 	BrandID     *uuid.UUID `bun:"type:uuid"`
 	Brand       *Brand     `bun:"rel:belongs-to,join:brand_id=id"`
 	ModelID     *uuid.UUID `bun:"type:uuid"`

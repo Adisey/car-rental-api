@@ -11,7 +11,7 @@ import (
 	"github.com/Adisey/car-rental-api/internal/validation"
 )
 
-func IsEmptyColor(color *api_models.CodeReference) bool {
+func IsEmptyColor(color *api_models.CarColor) bool {
 	return color != nil &&
 		color.Id == nil &&
 		color.Code == nil
@@ -19,7 +19,7 @@ func IsEmptyColor(color *api_models.CodeReference) bool {
 
 func ResolveColorID(
 	ctx context.Context,
-	color *api_models.CodeReference,
+	color *api_models.CarColor,
 ) (*uuid.UUID, error) {
 	if color == nil {
 		return nil, nil
@@ -56,6 +56,7 @@ func ResolveColorID(
 		}
 		newColor := &db_models.Color{
 			Code: *color.Code,
+			Hex:  color.Hex,
 		}
 		err = colorRepo.CreateRepository(
 			ctx,

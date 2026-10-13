@@ -15,6 +15,7 @@ func main() {
 	).Load(
 		&db_models.Car{},
 		&db_models.Color{},
+		&db_models.BodyType{},
 		&db_models.Brand{},
 		&db_models.Model{},
 	)

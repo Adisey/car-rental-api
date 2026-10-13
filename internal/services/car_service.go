@@ -19,14 +19,25 @@ func GetCarsService(ctx context.Context) ([]api_models.Car, error) {
 	}
 	cars := make([]api_models.Car, 0, len(dbCars))
 	for _, car := range dbCars {
-		var color *api_models.CodeReference
+		var color *api_models.CarColor
 		if car.Color != nil {
 			colorID := car.Color.ID.String()
 			colorCode := car.Color.Code
-
-			color = &api_models.CodeReference{
+			colorHex := car.Color.Hex
+			color = &api_models.CarColor{
 				Id:   &colorID,
 				Code: &colorCode,
+				Hex:  colorHex,
+			}
+		}
+		var bodyType *api_models.CodeReference
+		if car.BodyType != nil {
+			bodyTypeID := car.BodyType.ID.String()
+			bodyTypeCode := car.BodyType.Code
+
+			bodyType = &api_models.CodeReference{
+				Id:   &bodyTypeID,
+				Code: &bodyTypeCode,
 			}
 		}
 		var brand *api_models.NameReference
@@ -54,12 +65,13 @@ func GetCarsService(ctx context.Context) ([]api_models.Car, error) {
 				Brand: brand,
 			}
 		}
-
 		cars = append(cars, api_models.Car{
 			Id:          car.ID.String(),
 			Name:        car.Name,
 			Description: car.Description,
+			PowerHp:     car.PowerHp,
 			Color:       color,
+			BodyType:    bodyType,
 			Brand:       brand,
 			Model:       model,
 			CreatedAt:   car.CreatedAt,
@@ -82,13 +94,24 @@ func GetCarByIDService(
 	if err != nil {
 		return nil, err
 	}
-	var color *api_models.CodeReference
+	var color *api_models.CarColor
 	if dbCar.Color != nil {
 		colorID := dbCar.Color.ID.String()
 		colorCode := dbCar.Color.Code
-		color = &api_models.CodeReference{
+		colorHex := dbCar.Color.Hex
+		color = &api_models.CarColor{
 			Id:   &colorID,
 			Code: &colorCode,
+			Hex:  colorHex,
+		}
+	}
+	var bodyType *api_models.CodeReference
+	if dbCar.BodyType != nil {
+		bodyTypeID := dbCar.BodyType.ID.String()
+		bodyTypeCode := dbCar.BodyType.Code
+		bodyType = &api_models.CodeReference{
+			Id:   &bodyTypeID,
+			Code: &bodyTypeCode,
 		}
 	}
 	var brand *api_models.NameReference
@@ -116,12 +139,13 @@ func GetCarByIDService(
 			Brand: brand,
 		}
 	}
-
 	return &api_models.Car{
 		Id:          dbCar.ID.String(),
 		Name:        dbCar.Name,
 		Description: dbCar.Description,
+		PowerHp:     dbCar.PowerHp,
 		Color:       color,
+		BodyType:    bodyType,
 		Brand:       brand,
 		Model:       model,
 		CreatedAt:   dbCar.CreatedAt,
@@ -146,6 +170,18 @@ func CreateCarService(
 		colorID, err = ResolveColorID(
 			ctx,
 			request.Color,
+		)
+		if err != nil {
+			return nil, err
+		}
+	}
+	var bodyTypeID *uuid.UUID
+	if request.BodyType != nil &&
+		!IsEmptyBodyType(request.BodyType) {
+		var err error
+		bodyTypeID, err = ResolveBodyTypeID(
+			ctx,
+			request.BodyType,
 		)
 		if err != nil {
 			return nil, err
@@ -189,6 +225,7 @@ func CreateCarService(
 		Name:        request.Name,
 		Description: request.Description,
 		ColorID:     colorID,
+		BodyTypeID:  bodyTypeID,
 		BrandID:     brandID,
 		ModelID:     modelID,
 	}
@@ -201,13 +238,24 @@ func CreateCarService(
 	if err != nil {
 		return nil, err
 	}
-	var color *api_models.CodeReference
+	var color *api_models.CarColor
 	if car.Color != nil {
 		colorID := car.Color.ID.String()
 		colorCode := car.Color.Code
-		color = &api_models.CodeReference{
+		colorHex := car.Color.Hex
+		color = &api_models.CarColor{
 			Id:   &colorID,
 			Code: &colorCode,
+			Hex:  colorHex,
+		}
+	}
+	var bodyType *api_models.CodeReference
+	if car.BodyType != nil {
+		bodyTypeID := car.BodyType.ID.String()
+		bodyTypeCode := car.BodyType.Code
+		bodyType = &api_models.CodeReference{
+			Id:   &bodyTypeID,
+			Code: &bodyTypeCode,
 		}
 	}
 	var brand *api_models.NameReference
@@ -242,7 +290,9 @@ func CreateCarService(
 		Id:          car.ID.String(),
 		Name:        car.Name,
 		Description: car.Description,
+		PowerHp:     car.PowerHp,
 		Color:       color,
+		BodyType:    bodyType,
 		Brand:       brand,
 		Model:       model,
 		CreatedAt:   car.CreatedAt,
@@ -264,6 +314,22 @@ func UpdateCarService(
 	)
 	if validationResult.HasErrors() {
 		return nil, validationResult
+	}
+	var (
+		bodyTypeID           *uuid.UUID
+		shouldUpdateBodyType bool
+	)
+	if request.BodyType != nil {
+		shouldUpdateBodyType = true
+		if !IsEmptyColor(request.Color) {
+			bodyTypeID, err = ResolveBodyTypeID(
+				ctx,
+				request.BodyType,
+			)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 	var (
 		colorID           *uuid.UUID
@@ -329,6 +395,8 @@ func UpdateCarService(
 		request,
 		colorID,
 		shouldUpdateColor,
+		bodyTypeID,
+		shouldUpdateBodyType,
 		brandID,
 		shouldUpdateBrand,
 		modelID,
@@ -341,13 +409,22 @@ func UpdateCarService(
 	if err != nil {
 		return nil, err
 	}
-	var color *api_models.CodeReference
+	var color *api_models.CarColor
 	if car.Color != nil {
 		colorID := car.Color.ID.String()
 		colorCode := car.Color.Code
-		color = &api_models.CodeReference{
+		color = &api_models.CarColor{
 			Id:   &colorID,
 			Code: &colorCode,
+		}
+	}
+	var bodyType *api_models.CodeReference
+	if car.BodyType != nil {
+		bodyTypeID := car.BodyType.ID.String()
+		bodyTypeCode := car.BodyType.Code
+		bodyType = &api_models.CodeReference{
+			Id:   &bodyTypeID,
+			Code: &bodyTypeCode,
 		}
 	}
 	var brand *api_models.NameReference
@@ -382,7 +459,9 @@ func UpdateCarService(
 		Id:          car.ID.String(),
 		Name:        car.Name,
 		Description: car.Description,
+		PowerHp:     car.PowerHp,
 		Color:       color,
+		BodyType:    bodyType,
 		Brand:       brand,
 		Model:       model,
 		CreatedAt:   car.CreatedAt,
@@ -391,14 +470,11 @@ func UpdateCarService(
 }
 
 func DeleteCarService(ctx context.Context, id string) error {
-
 	carID, err := uuid.Parse(id)
 	if err != nil {
 		return err
 	}
-
 	repo := repositories.NewCarRepository()
-
 	return repo.DeleteRepository(
 		ctx,
 		carID,

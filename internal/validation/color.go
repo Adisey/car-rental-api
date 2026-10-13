@@ -26,7 +26,7 @@ func ValidateCreateColorRequest(
 
 	if code == "" {
 		result.Add(
-			"name",
+			"code",
 			"required",
 			nil,
 		)
@@ -34,7 +34,7 @@ func ValidateCreateColorRequest(
 
 	if len(code) < ColorRules.Code.MinLength {
 		result.Add(
-			"name",
+			"code",
 			"min_length",
 			map[string]any{
 				"min": ColorRules.Code.MinLength,
@@ -44,7 +44,7 @@ func ValidateCreateColorRequest(
 
 	if len(code) > ColorRules.Code.MaxLength {
 		result.Add(
-			"name",
+			"code",
 			"max_length",
 			map[string]any{
 				"max": ColorRules.Code.MaxLength,
@@ -74,7 +74,7 @@ func ValidateUpdateColorRequest(
 
 		if len(code) < ColorRules.Code.MinLength {
 			result.Add(
-				"name",
+				"code",
 				"min_length",
 				map[string]any{
 					"min": ColorRules.Code.MinLength,
@@ -84,7 +84,7 @@ func ValidateUpdateColorRequest(
 
 		if len(code) > ColorRules.Code.MaxLength {
 			result.Add(
-				"name",
+				"code",
 				"max_length",
 				map[string]any{
 					"max": ColorRules.Code.MaxLength,

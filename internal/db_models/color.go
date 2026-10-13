@@ -10,4 +10,5 @@ type Color struct {
 
 	ID   uuid.UUID `bun:",pk,type:uuid,default:gen_random_uuid()"`
 	Code string    `bun:"type:text,notnull,unique:idx_colors_code"`
+	Hex  *string   `bun:"type:text"`
 }

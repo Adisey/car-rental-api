@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"strings"
 
@@ -43,10 +42,7 @@ func CarByIDMainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCarsHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("GET /cars")
-
 	w.Header().Set("Content-Type", "application/json")
-
 	cars, err := services.GetCarsService(r.Context())
 	if err != nil {
 		api_errors.HandleApiError(w, err)

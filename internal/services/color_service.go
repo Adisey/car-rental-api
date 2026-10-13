@@ -25,6 +25,7 @@ func GetColorsService(ctx context.Context) ([]api_models.Color, error) {
 		colors = append(colors, api_models.Color{
 			Id:   color.ID.String(),
 			Code: color.Code,
+			Hex:  color.Hex,
 		})
 	}
 
@@ -46,10 +47,10 @@ func GetColorByIDService(
 	if err != nil {
 		return nil, err
 	}
-
 	return &api_models.Color{
 		Id:   dbColor.ID.String(),
 		Code: dbColor.Code,
+		Hex:  dbColor.Hex,
 	}, nil
 }
 
@@ -77,11 +78,13 @@ func CreateColorService(
 		return &api_models.Color{
 			Id:   existingColor.ID.String(),
 			Code: existingColor.Code,
+			Hex:  existingColor.Hex,
 		}, nil
 	}
 
 	color := &db_models.Color{
 		Code: request.Code,
+		Hex:  request.Hex,
 	}
 
 	errNew := repo.CreateRepository(ctx, color)
@@ -92,6 +95,7 @@ func CreateColorService(
 	return &api_models.Color{
 		Id:   color.ID.String(),
 		Code: color.Code,
+		Hex:  color.Hex,
 	}, nil
 }
 
@@ -146,5 +150,6 @@ func UpdateColorService(
 	return &api_models.Color{
 		Id:   color.ID.String(),
 		Code: color.Code,
+		Hex:  color.Hex,
 	}, nil
 }

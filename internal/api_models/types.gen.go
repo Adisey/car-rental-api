@@ -13,41 +13,34 @@ type AuditableEntity struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// BodyType defines model for BodyType.
+type BodyType = CodeEntity
+
 // Brand defines model for Brand.
 type Brand = NameEntity
 
 // Car defines model for Car.
 type Car struct {
+	BodyType    *CodeReference `json:"body_type,omitempty"`
 	Brand       *NameReference `json:"brand,omitempty"`
-	Color       *CodeReference `json:"color,omitempty"`
+	Color       *CarColor      `json:"color,omitempty"`
 	CreatedAt   time.Time      `json:"created_at"`
 	Description *string        `json:"description,omitempty"`
 	Id          string         `json:"id"`
 	Model       *Model         `json:"model,omitempty"`
 	Name        string         `json:"name"`
+	PowerHp     *string        `json:"power_hp,omitempty"`
 	UpdatedAt   time.Time      `json:"updated_at"`
 }
 
-// CarModel Model reference.
-// Resolution order:
-// 1. id
-// 2. name
-// Examples:
-// Existing name:
-//
-//	{
-//	  "id": "uuid"
-//	}
-//
-// Find or create by name:
-//
-//	{
-//	  "name": "X6"
-//	}
-//
-// Clear model in PATCH:
-//
-//	{}
+// CarColor defines model for CarColor.
+type CarColor struct {
+	Code *string `json:"code,omitempty"`
+	Hex  *string `json:"hex,omitempty"`
+	Id   *string `json:"id,omitempty"`
+}
+
+// CarModel defines model for CarModel.
 type CarModel struct {
 	Brand *NameReference `json:"brand,omitempty"`
 	Id    *string        `json:"id,omitempty"`
@@ -91,16 +84,21 @@ type Color struct {
 	Id   string  `json:"id"`
 }
 
+// CreateBodyTypeRequest defines model for CreateBodyTypeRequest.
+type CreateBodyTypeRequest = CreateCodeEntityRequest
+
 // CreateBrandRequest defines model for CreateBrandRequest.
 type CreateBrandRequest = CreateNameEntityRequest
 
 // CreateCarRequest defines model for CreateCarRequest.
 type CreateCarRequest struct {
+	BodyType    *CodeReference `json:"body_type,omitempty"`
 	Brand       *NameReference `json:"brand,omitempty"`
-	Color       *CodeReference `json:"color,omitempty"`
+	Color       *CarColor      `json:"color,omitempty"`
 	Description *string        `json:"description,omitempty"`
 	Model       *CarModel      `json:"model,omitempty"`
 	Name        string         `json:"name"`
+	PowerHp     *string        `json:"power_hp,omitempty"`
 }
 
 // CreateCodeEntityRequest defines model for CreateCodeEntityRequest.
@@ -174,11 +172,25 @@ type NameReference struct {
 	Name *string `json:"name,omitempty"`
 }
 
+// UpdateBodyTypeRequest defines model for UpdateBodyTypeRequest.
+type UpdateBodyTypeRequest = UpdateCodeEntityRequest
+
 // UpdateBrandRequest defines model for UpdateBrandRequest.
 type UpdateBrandRequest = UpdateNameEntityRequest
 
 // UpdateCarRequest defines model for UpdateCarRequest.
 type UpdateCarRequest struct {
+	// BodyType Color update rules:
+	// field omitted:
+	//   color is not changed
+	// color: {}
+	//   clears current color
+	// color.id:
+	//   uses existing color
+	// color.code:
+	//   finds existing color by code or creates new one
+	BodyType *CodeReference `json:"body_type,omitempty"`
+
 	// Brand Brand update rules:
 	// field omitted:
 	//   brand is not changed
@@ -188,42 +200,18 @@ type UpdateCarRequest struct {
 	//   uses existing brand
 	// brand.name:
 	//   finds existing brand by name or creates new one
-	Brand *NameReference `json:"brand,omitempty"`
-
-	// Color Color update rules:
-	// field omitted:
-	//   color is not changed
-	// color: {}
-	//   clears current color
-	// color.id:
-	//   uses existing color
-	// color.code:
-	//   finds existing color by code or creates new one
-	Color       *CodeReference `json:"color,omitempty"`
+	Brand       *NameReference `json:"brand,omitempty"`
+	Color       *CarColor      `json:"color,omitempty"`
 	Description *string        `json:"description,omitempty"`
-
-	// Model Model reference.
-	// Resolution order:
-	// 1. id
-	// 2. name
-	// Examples:
-	// Existing name:
-	//   {
-	//     "id": "uuid"
-	//   }
-	// Find or create by name:
-	//   {
-	//     "name": "X6"
-	//   }
-	// Clear model in PATCH:
-	//   {}
-	Model *CarModel `json:"model,omitempty"`
-	Name  *string   `json:"name,omitempty"`
+	Model       *CarModel      `json:"model,omitempty"`
+	Name        *string        `json:"name,omitempty"`
+	PowerHp     *string        `json:"power_hp,omitempty"`
 }
 
 // UpdateCodeEntityRequest defines model for UpdateCodeEntityRequest.
 type UpdateCodeEntityRequest struct {
 	Code *string `json:"code,omitempty"`
+	Hex  *string `json:"hex,omitempty"`
 }
 
 // UpdateColorRequest defines model for UpdateColorRequest.
@@ -247,6 +235,12 @@ type UpdateNameEntityRequest struct {
 type GetModelsParams struct {
 	BrandId *string `form:"brandId,omitempty" json:"brandId,omitempty"`
 }
+
+// CreateBodyTypeJSONRequestBody defines body for CreateBodyType for application/json ContentType.
+type CreateBodyTypeJSONRequestBody = CreateBodyTypeRequest
+
+// UpdateBodyTypeJSONRequestBody defines body for UpdateBodyType for application/json ContentType.
+type UpdateBodyTypeJSONRequestBody = UpdateBodyTypeRequest
 
 // UpdateBrandJSONRequestBody defines body for UpdateBrand for application/json ContentType.
 type UpdateBrandJSONRequestBody = UpdateBrandRequest

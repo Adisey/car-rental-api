@@ -214,7 +214,7 @@ CREATE TABLE "brands"
 CONSTRAINT "idx_brands*name" UNIQUE ("name")
 ```
 
-Провери*ь, что в таблице `cars` появились:*
+Проверить, что в таблице `cars` появились:
 
 ```sql
 brand_id uuid
@@ -222,9 +222,9 @@ brand_id uuid
 
 и
 
-```s*l
+```sql
 FOREIGN KEY ("brand_id")
-REFEREN*ES "brands" ("id")
+REFERENTES "brands" ("id")
 ```
 
 ---
@@ -243,16 +243,17 @@ REFEREN*ES "brands" ("id")
 
 Atlas должен создать:
 
-\*``sql
+```sql
 CREATE TABLE brands
 
-````
+```
 
 и:
-*```sql
+
+```sql
 ALTER TABLE cars
-ADD COLUMN*brand_id uuid NULL
-````
+ADD COLUMN brand_id uuid NULL
+```
 
 а также внешний ключ:
 
@@ -380,6 +381,8 @@ GetByNameRepository()
 CreateRepository()
 UpdateRepository()
 ```
+
+!! Если нужно делай привязку к Car
 
 ---
 
