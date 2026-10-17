@@ -17,7 +17,10 @@ func main() {
 		&db_models.Color{},
 		&db_models.BodyType{},
 		&db_models.Brand{},
+		&db_models.DriveType{},
+		&db_models.FuelType{},
 		&db_models.Model{},
+		&db_models.TransmissionType{},
 	)
 
 	if err != nil {

@@ -11,32 +11,26 @@ import (
 	"github.com/Adisey/car-rental-api/internal/validation"
 )
 
-func IsEmptyBodyType(bodyType *api_models.CodeReference) bool {
-	return bodyType != nil &&
-		bodyType.Id == nil &&
-		bodyType.Code == nil
-}
-
 func ResolveBodyTypeID(
 	ctx context.Context,
-	bodyType *api_models.CodeReference,
+	item *api_models.CodeReference,
 ) (*uuid.UUID, error) {
-	if bodyType == nil {
+	if item == nil {
 		return nil, nil
 	}
-	bodyTypeRepo := repositories.NewBodyTypeRepository()
-	if bodyType.Id != nil {
-		bodyTypeID, err := uuid.Parse(*bodyType.Id)
+	repo := repositories.NewBodyTypeRepository()
+	if item.Id != nil {
+		itemID, err := uuid.Parse(*item.Id)
 		if err == nil {
-			existingBodyType, err := bodyTypeRepo.GetByIDRepository(
+			existItem, err := repo.GetByIDRepository(
 				ctx,
-				bodyTypeID,
+				itemID,
 			)
 			if err == nil {
-				return &existingBodyType.ID, nil
+				return &existItem.ID, nil
 			}
 		}
-		if bodyType.Code == nil {
+		if item.Code == nil {
 			result := validation.New()
 			result.Add(
 				"bodyType",
@@ -46,25 +40,25 @@ func ResolveBodyTypeID(
 			return nil, result
 		}
 	}
-	if bodyType.Code != nil {
-		existingBodyType, err := bodyTypeRepo.GetByCodeRepository(
+	if item.Code != nil {
+		existItem, err := repo.GetByCodeRepository(
 			ctx,
-			*bodyType.Code,
+			*item.Code,
 		)
 		if err == nil {
-			return &existingBodyType.ID, nil
+			return &existItem.ID, nil
 		}
-		newBodyType := &db_models.BodyType{
-			Code: *bodyType.Code,
+		newItem := &db_models.BodyType{
+			Code: *item.Code,
 		}
-		err = bodyTypeRepo.CreateRepository(
+		err = repo.CreateRepository(
 			ctx,
-			newBodyType,
+			newItem,
 		)
 		if err != nil {
 			return nil, err
 		}
-		return &newBodyType.ID, nil
+		return &newItem.ID, nil
 	}
 	return nil, nil
 }

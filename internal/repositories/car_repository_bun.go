@@ -25,11 +25,14 @@ func (r *BunCarRepository) GetAll(ctx context.Context) ([]db_models.Car, error) 
 
 	err := db.BunDB.NewSelect().
 		Model(&cars).
-		Relation("Color").
 		Relation("BodyType").
 		Relation("Brand").
+		Relation("Color").
+		Relation("DriveType").
+		Relation("FuelType").
 		Relation("Model").
 		Relation("Model.Brand").
+		Relation("TransmissionType").
 		Where("deleted_at IS NULL").
 		Scan(ctx)
 
@@ -43,11 +46,14 @@ func (r *BunCarRepository) GetByIDRepository(
 	car := new(db_models.Car)
 	err := db.BunDB.NewSelect().
 		Model(car).
-		Relation("Color").
 		Relation("BodyType").
 		Relation("Brand").
+		Relation("Color").
+		Relation("DriveType").
+		Relation("FuelType").
 		Relation("Model").
 		Relation("Model.Brand").
+		Relation("TransmissionType").
 		Where("car.id = ?", id).
 		Where("deleted_at IS NULL").
 		Scan(ctx)
@@ -70,18 +76,28 @@ func (r *BunCarRepository) CreateRepository(
 	return err
 }
 
+type CarRelationsToUpdate struct {
+	BodyID             *uuid.UUID
+	UpdateBody         *bool
+	BrandID            *uuid.UUID
+	UpdateBrand        *bool
+	ColorID            *uuid.UUID
+	UpdateColor        *bool
+	DriveID            *uuid.UUID
+	UpdateDrive        *bool
+	FuelID             *uuid.UUID
+	UpdateFuel         *bool
+	ModelID            *uuid.UUID
+	UpdateModel        *bool
+	TransmissionID     *uuid.UUID
+	UpdateTransmission *bool
+}
+
 func (r *BunCarRepository) UpdateRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateCarRequest,
-	colorID *uuid.UUID,
-	shouldUpdateColor bool,
-	bodyTypeID *uuid.UUID,
-	shouldUpdateBodyType bool,
-	brandID *uuid.UUID,
-	shouldUpdateBrand bool,
-	modelID *uuid.UUID,
-	shouldUpdateModel bool,
+	relations CarRelationsToUpdate,
 ) (*db_models.Car, error) {
 	car, err := r.GetByIDRepository(ctx, id)
 	if err != nil {
@@ -93,17 +109,29 @@ func (r *BunCarRepository) UpdateRepository(
 	if request.Description != nil {
 		car.Description = request.Description
 	}
-	if shouldUpdateColor {
-		car.ColorID = colorID
+	if request.PowerHp != nil {
+		car.PowerHp = request.PowerHp
 	}
-	if shouldUpdateBodyType {
-		car.BodyTypeID = bodyTypeID
+	if relations.UpdateBody != nil {
+		car.BodyTypeID = relations.BodyID
 	}
-	if shouldUpdateBrand {
-		car.BrandID = brandID
+	if relations.UpdateBrand != nil {
+		car.BrandID = relations.BrandID
 	}
-	if shouldUpdateModel {
-		car.ModelID = modelID
+	if relations.UpdateColor != nil {
+		car.ColorID = relations.ColorID
+	}
+	if relations.UpdateDrive != nil {
+		car.DriveID = relations.DriveID
+	}
+	if relations.UpdateFuel != nil {
+		car.FuelID = relations.FuelID
+	}
+	if relations.UpdateModel != nil {
+		car.ModelID = relations.ModelID
+	}
+	if relations.UpdateTransmission != nil {
+		car.TransmissionID = relations.TransmissionID
 	}
 	car.UpdatedAt = time.Now().UTC()
 	_, err = db.BunDB.NewUpdate().

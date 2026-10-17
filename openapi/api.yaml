@@ -200,7 +200,7 @@ paths:
               $ref: "#/components/schemas/CreateBodyTypeRequest"
       responses:
         "201":
-          description: Color created
+          description: BodyType created
           content:
             application/json:
               schema:
@@ -246,6 +246,213 @@ paths:
                 $ref: "#/components/schemas/BodyType"
         "404":
           description: BodyType not found
+
+  /drive_type:
+    get:
+      operationId: DriveType
+      responses:
+        "200":
+          description: DriveType list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DriveType"
+    post:
+      operationId: DriveType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDriveTypeRequest"
+      responses:
+        "201":
+          description: DriveType created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriveType"
+  /drive_type/{id}:
+    get:
+      operationId: getDriveTypeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: DriveType
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriveType"
+        "404":
+          description: DriveType not found
+    patch:
+      operationId: updateDriveType
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDriveTypeRequest"
+      responses:
+        "200":
+          description: Updated BodyType
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriveType"
+        "404":
+          description: DriveType not found
+
+  /fuel_type:
+    get:
+      operationId: getFuelType
+      responses:
+        "200":
+          description: FuelType list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FuelType"
+    post:
+      operationId: createFuelType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFuelTypeRequest"
+      responses:
+        "201":
+          description: FuelType created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FuelType"
+  /fuel_type_type/{id}:
+    get:
+      operationId: getFuelTypeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: FuelType
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FuelType"
+        "404":
+          description: FuelType not found
+    patch:
+      operationId: updateFuelType
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFuelTypeRequest"
+      responses:
+        "200":
+          description: Updated FuelType
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FuelType"
+        "404":
+          description: FuelType not found
+
+  /transmission_type:
+    get:
+      operationId: getTransmissionType
+      responses:
+        "200":
+          description: TransmissionType list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TransmissionType"
+    post:
+      operationId: createTransmissionType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTransmissionTypeRequest"
+      responses:
+        "201":
+          description: TransmissionType created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransmissionType"
+  /transmission_type/{id}:
+    get:
+      operationId: getTransmissionTypeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: TransmissionType
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransmissionType"
+        "404":
+          description: TransmissionType not found
+    patch:
+      operationId: updateTransmissionType
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTransmissionTypeRequest"
+      responses:
+        "200":
+          description: Updated TransmissionType
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BodyType"
+        "404":
+          description: TransmissionType not found
 
   /brands:
     get:
@@ -314,7 +521,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Brand"
         "404":
-          description: Color not found
+          description: Brand not found
 
   /models:
     get:
@@ -533,7 +740,7 @@ components:
           minLength: 2
           maxLength: 100
 
-    
+#  MainItems 
     Car:
       allOf:
         - $ref: "#/components/schemas/NameEntity"
@@ -560,9 +767,21 @@ components:
               allOf:
                 - $ref: "#/components/schemas/NameReference"
               nullable: true
+            drive_type:
+              allOf:
+                - $ref: "#/components/schemas/CodeReference"
+              nullable: true
+            fuel_type:
+              allOf:
+                - $ref: "#/components/schemas/CodeReference"
+              nullable: true
             model:
               allOf:
                 - $ref: "#/components/schemas/Model"
+              nullable: true
+            transmission_type:
+              allOf:
+                - $ref: "#/components/schemas/CodeReference"
               nullable: true
     CreateCarRequest:
       type: object
@@ -581,30 +800,40 @@ components:
           type: string
           nullable: true
           maxLength: 10
-        color:
+        brand:
           allOf:
-            - $ref:  "#/components/schemas/CarColor"
+            - $ref: "#/components/schemas/NameReference"
           nullable: true
         body_type:
           allOf:
             - $ref:  "#/components/schemas/CodeReference"
           nullable: true
-        brand:
+        color:
           allOf:
-            - $ref: "#/components/schemas/NameReference"
+            - $ref:  "#/components/schemas/CarColor"
+          nullable: true
+        drive_type:
+          allOf:
+            - $ref:  "#/components/schemas/CodeReference"
+          nullable: true
+        fuel_type:
+          allOf:
+            - $ref:  "#/components/schemas/CodeReference"
           nullable: true
         model:
           allOf:
             - $ref: "#/components/schemas/CarModel"
           nullable: true
+        transmission_type:
+          allOf:
+            - $ref:  "#/components/schemas/CodeReference"
+          nullable: true
     UpdateCarRequest:
       type: object
-
       properties:
         name:
           type: string
           nullable: true
-
         description:
           type: string
           nullable: true
@@ -612,10 +841,6 @@ components:
           type: string
           nullable: true
           maxLength: 10
-        color:
-          nullable: true
-          allOf:
-            - $ref: "#/components/schemas/CarColor"
         body_type:
           nullable: true
           allOf:
@@ -644,55 +869,27 @@ components:
               uses existing brand
             brand.name:
               finds existing brand by name or creates new one
+        color:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/CarColor"
+        drive_type:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/CodeReference"
+        fuel_type:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/CodeReference"
         model:
           $ref: "#/components/schemas/CarModel"
           nullable: true
+        transmission_type:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/CodeReference"
         
-    Color:
-      allOf:
-        - $ref: "#/components/schemas/CodeEntity"
-        - type: object
-          properties:
-            hex:
-              type: string
-              nullable: true
-    CreateColorRequest:
-      allOf:
-          - $ref: "#/components/schemas/CreateCodeEntityRequest"
-          - type: object
-            properties:
-              hex:
-                type: string
-                nullable: true
-    UpdateColorRequest:
-      allOf:
-        - $ref: "#/components/schemas/UpdateCodeEntityRequest"
-        - type: object
-          properties:
-            hex:
-              type: string
-              nullable: true
-    CarColor:
-      allOf:
-        - $ref: "#/components/schemas/CodeReference"
-        - type: object
-          properties:
-            hex:
-              type: string
-              nullable: true
-
-
-       
-    BodyType:
-      allOf:
-        - $ref: "#/components/schemas/CodeEntity"
-    CreateBodyTypeRequest:
-      allOf:
-          - $ref: "#/components/schemas/CreateCodeEntityRequest"
-    UpdateBodyTypeRequest:    
-      allOf:
-          - $ref: "#/components/schemas/UpdateCodeEntityRequest"     
-
+#  Dictionaries
     Brand:
       allOf:
         - $ref: "#/components/schemas/NameEntity"
@@ -764,4 +961,77 @@ components:
                 - $ref: "#/components/schemas/NameReference"
               nullable: true
 
+ 
+    BodyType:
+      allOf:
+        - $ref: "#/components/schemas/CodeEntity"
+    CreateBodyTypeRequest:
+      allOf:
+          - $ref: "#/components/schemas/CreateCodeEntityRequest"
+    UpdateBodyTypeRequest:    
+      allOf:
+          - $ref: "#/components/schemas/UpdateCodeEntityRequest"     
+
+    Color:
+      allOf:
+        - $ref: "#/components/schemas/CodeEntity"
+        - type: object
+          properties:
+            hex:
+              type: string
+              nullable: true
+    CreateColorRequest:
+      allOf:
+          - $ref: "#/components/schemas/CreateCodeEntityRequest"
+          - type: object
+            properties:
+              hex:
+                type: string
+                nullable: true
+    UpdateColorRequest:
+      allOf:
+        - $ref: "#/components/schemas/UpdateCodeEntityRequest"
+        - type: object
+          properties:
+            hex:
+              type: string
+              nullable: true
+    CarColor:
+      allOf:
+        - $ref: "#/components/schemas/CodeReference"
+        - type: object
+          properties:
+            hex:
+              type: string
+              nullable: true
+    
+    DriveType:
+      allOf:
+        - $ref: "#/components/schemas/CodeEntity"
+    CreateDriveTypeRequest:
+      allOf:
+          - $ref: "#/components/schemas/CreateCodeEntityRequest"
+    UpdateDriveTypeRequest:    
+      allOf:
+          - $ref: "#/components/schemas/UpdateCodeEntityRequest"     
+
+    FuelType:
+      allOf:
+        - $ref: "#/components/schemas/CodeEntity"
+    CreateFuelTypeRequest:
+      allOf:
+          - $ref: "#/components/schemas/CreateCodeEntityRequest"
+    UpdateFuelTypeRequest:    
+      allOf:
+          - $ref: "#/components/schemas/UpdateCodeEntityRequest"     
+
+    TransmissionType:
+      allOf:
+        - $ref: "#/components/schemas/CodeEntity"
+    CreateTransmissionTypeRequest:
+      allOf:
+          - $ref: "#/components/schemas/CreateCodeEntityRequest"
+    UpdateTransmissionTypeRequest:    
+      allOf:
+          - $ref: "#/components/schemas/UpdateCodeEntityRequest"     
 

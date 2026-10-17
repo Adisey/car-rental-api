@@ -19,7 +19,7 @@ type BodyTypeRepository interface {
 
 	GetByCodeRepository(
 		ctx context.Context,
-		name string,
+		code string,
 	) (*db_models.BodyType, error)
 
 	CreateRepository(

@@ -13,22 +13,18 @@ import (
 
 func GetBodyTypesService(ctx context.Context) ([]api_models.BodyType, error) {
 	repo := repositories.NewBodyTypeRepository()
-
-	dbBodyTypes, err := repo.GetAll(ctx)
+	dbItems, err := repo.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
-
-	bodyTypes := make([]api_models.BodyType, 0, len(dbBodyTypes))
-
-	for _, bodyType := range dbBodyTypes {
-		bodyTypes = append(bodyTypes, api_models.BodyType{
-			Id:   bodyType.ID.String(),
-			Code: bodyType.Code,
+	items := make([]api_models.BodyType, 0, len(dbItems))
+	for _, item := range dbItems {
+		items = append(items, api_models.BodyType{
+			Id:   item.ID.String(),
+			Code: item.Code,
 		})
 	}
-
-	return bodyTypes, nil
+	return items, nil
 }
 
 func GetBodyTypeByIDService(
@@ -36,91 +32,74 @@ func GetBodyTypeByIDService(
 	id string,
 ) (*api_models.BodyType, error) {
 	repo := repositories.NewBodyTypeRepository()
-
-	bodyTypeID, err := uuid.Parse(id)
+	itemID, err := uuid.Parse(id)
 	if err != nil {
 		return nil, err
 	}
-
-	dbBodyType, err := repo.GetByIDRepository(ctx, bodyTypeID)
+	dbItem, err := repo.GetByIDRepository(ctx, itemID)
 	if err != nil {
 		return nil, err
 	}
-
 	return &api_models.BodyType{
-		Id:   dbBodyType.ID.String(),
-		Code: dbBodyType.Code,
+		Id:   dbItem.ID.String(),
+		Code: dbItem.Code,
 	}, nil
 }
 
 func CreateBodyTypeService(
 	ctx context.Context,
-	request api_models.CreateBodyTypeRequest,
+	request api_models.CreateCodeEntityRequest,
 ) (*api_models.BodyType, error) {
-
-	validationResult := validation.ValidateCreateBodyTypeRequest(
+	validationResult := validation.ValidateCreateCodeRequest(
 		request,
 	)
-
 	if validationResult.HasErrors() {
 		return nil, validationResult
 	}
-
 	repo := repositories.NewBodyTypeRepository()
-
-	existingBodyType, errExist := repo.GetByCodeRepository(
+	existItem, errExist := repo.GetByCodeRepository(
 		ctx,
 		request.Code,
 	)
-
 	if errExist == nil {
 		return &api_models.BodyType{
-			Id:   existingBodyType.ID.String(),
-			Code: existingBodyType.Code,
+			Id:   existItem.ID.String(),
+			Code: existItem.Code,
 		}, nil
 	}
-
-	bodyType := &db_models.BodyType{
+	newItem := &db_models.BodyType{
 		Code: request.Code,
 	}
-
-	errNew := repo.CreateRepository(ctx, bodyType)
+	errNew := repo.CreateRepository(ctx, newItem)
 	if errNew != nil {
 		return nil, errNew
 	}
-
 	return &api_models.BodyType{
-		Id:   bodyType.ID.String(),
-		Code: bodyType.Code,
+		Id:   newItem.ID.String(),
+		Code: newItem.Code,
 	}, nil
 }
 
 func UpdateBodyTypeService(
 	ctx context.Context,
 	id string,
-	request api_models.UpdateBodyTypeRequest,
+	request api_models.UpdateCodeEntityRequest,
 ) (*api_models.BodyType, error) {
-
 	repo := repositories.NewBodyTypeRepository()
-
-	bodyTypeID, errId := uuid.Parse(id)
+	itemID, errId := uuid.Parse(id)
 	if errId != nil {
 		return nil, errId
 	}
-
-	validationResult := validation.ValidateUpdateBodyTypeRequest(
+	validationResult := validation.ValidateUpdateCodeRequest(
 		request,
 	)
-
 	if request.Code != nil {
-
-		existingBodyType, err := repo.GetByCodeRepository(
+		existItem, err := repo.GetByCodeRepository(
 			ctx,
 			*request.Code,
 		)
-
 		if err == nil &&
-			existingBodyType.ID != bodyTypeID {
+			existItem.ID != itemID {
 
 			validationResult.Add(
 				"code",
@@ -129,22 +108,19 @@ func UpdateBodyTypeService(
 			)
 		}
 	}
-
 	if validationResult.HasErrors() {
 		return nil, validationResult
 	}
-
-	bodyType, errUpdate := repo.UpdateRepository(
+	itemUpdated, errUpdate := repo.UpdateRepository(
 		ctx,
-		bodyTypeID,
+		itemID,
 		request,
 	)
 	if errUpdate != nil {
 		return nil, errUpdate
 	}
-
 	return &api_models.BodyType{
-		Id:   bodyType.ID.String(),
-		Code: bodyType.Code,
+		Id:   itemUpdated.ID.String(),
+		Code: itemUpdated.Code,
 	}, nil
 }

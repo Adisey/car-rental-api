@@ -20,21 +20,21 @@ func NewBodyTypeRepository() *BunBodyTypeRepository {
 }
 
 func (r *BunBodyTypeRepository) GetAll(ctx context.Context) ([]db_models.BodyType, error) {
-	var BodyTypes []db_models.BodyType
+	var bodyTypes []db_models.BodyType
 	err := db.BunDB.NewSelect().
-		Model(&BodyTypes).
+		Model(&bodyTypes).
 		Scan(ctx)
 
-	return BodyTypes, err
+	return bodyTypes, err
 }
 
 func (r *BunBodyTypeRepository) GetByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*db_models.BodyType, error) {
-	BodyType := new(db_models.BodyType)
+	bodyType := new(db_models.BodyType)
 	err := db.BunDB.NewSelect().
-		Model(BodyType).
+		Model(bodyType).
 		Where("id = ?", id).
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -43,15 +43,15 @@ func (r *BunBodyTypeRepository) GetByIDRepository(
 	if err != nil {
 		return nil, err
 	}
-	return BodyType, nil
+	return bodyType, nil
 }
 
 func (r *BunBodyTypeRepository) CreateRepository(
 	ctx context.Context,
-	BodyType *db_models.BodyType,
+	bodyType *db_models.BodyType,
 ) error {
 	_, err := db.BunDB.NewInsert().
-		Model(BodyType).
+		Model(bodyType).
 		Exec(ctx)
 	return err
 }
@@ -61,30 +61,30 @@ func (r *BunBodyTypeRepository) UpdateRepository(
 	id uuid.UUID,
 	request api_models.UpdateBodyTypeRequest,
 ) (*db_models.BodyType, error) {
-	BodyType, err := r.GetByIDRepository(ctx, id)
+	bodyType, err := r.GetByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	if request.Code != nil {
-		BodyType.Code = *request.Code
+		bodyType.Code = *request.Code
 	}
 	_, err = db.BunDB.NewUpdate().
-		Model(BodyType).
+		Model(bodyType).
 		WherePK().
 		Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return BodyType, nil
+	return bodyType, nil
 }
 
 func (r *BunBodyTypeRepository) GetByCodeRepository(
 	ctx context.Context,
 	code string,
 ) (*db_models.BodyType, error) {
-	brand := new(db_models.BodyType)
+	bodyType := new(db_models.BodyType)
 	err := db.BunDB.NewSelect().
-		Model(brand).
+		Model(bodyType).
 		Where("LOWER(code) = LOWER(?)", code).
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -93,5 +93,5 @@ func (r *BunBodyTypeRepository) GetByCodeRepository(
 	if err != nil {
 		return nil, err
 	}
-	return brand, nil
+	return bodyType, nil
 }

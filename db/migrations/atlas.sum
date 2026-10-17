@@ -1,4 +1,4 @@
-h1:SWKSlFsFHuMjJxxUBURSjYUxhEooDTTIC/SRwjyusBM=
+h1:ykNWo5560+VhcoQh24bfqP9FQFS8OESLGLXCAIBU1N0=
 20261004171106_init.sql h1:OOJyFnluj58f1pwMUGkLwMq4vcNXWuF8OhASOF9hG6U=
 20261005220816_add_car_timestamps.sql h1:vuqohMw4j5lguPaLgpH0gybvXcrtd9tuVb74Q/oY/rU=
 20261005224418_add_car_timestamps_timeStamp.sql h1:QylREJN3M4bvj+UehyldKnF+WhoBD1Kx1wINoHtTE6Q=
@@ -7,3 +7,4 @@ h1:SWKSlFsFHuMjJxxUBURSjYUxhEooDTTIC/SRwjyusBM=
 20261010140107_add_brands_dictionary.sql h1:oxADUiOv/ic2p5dSUZRkNH4LbhdRXY1KTUKQVtMCKfA=
 20261011142620_add_models_dictionary.sql h1:6O5uBtd7WcEkvx6qXpPN3rmtrj5maZ1gZ8UUERA2gO8=
 20261012222821_add_body_types_dictionary.sql h1:LAM27aRAPvYhF5dkgSxwO785dYucPAPvqSFpVg0d28Y=
+20261014164144_add_drives_fuels_transmissions_dictionaries.sql h1:YJonj97Sm4BpxgYzUEK6JyuvEjQhM528W1NNLEuRbZg=

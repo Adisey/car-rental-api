@@ -266,7 +266,7 @@ REFERENCES brands(id)
 
 ---
 
-# 9. Добавить начальные да\*ные
+# 9. Добавить начальные данные
 
 В конец миграции добавить:
 
@@ -384,6 +384,41 @@ UpdateRepository()
 
 !! Если нужно делай привязку к Car
 
+```go
+	err := db.BunDB.NewSelect().
+		Model(&cars).
+		Relation("Color").
+		Relation("BodyType").
+		Relation("Brand").
+		Relation("Model").
+		Relation("Model.Brand").
+		Where("deleted_at IS NULL").
+		Scan(ctx)
+
+if shouldUpdateBodyType {
+		car.BodyTypeID = bodyTypeID
+	}
+	if shouldUpdateBrand {
+		car.BrandID = brandID
+	}
+	if shouldUpdateColor {
+		car.ColorID = colorID
+	}
+	if shouldUpdateDrive {
+		car.DriveID = driveID
+	}
+	if shouldUpdateFuel {
+		car.FuelID = fuelID
+	}
+	if shouldUpdateModel {
+		car.ModelID = modelID
+	}
+	if shouldUpdateTransmission {
+		car.TransmissionID = transmissionID
+	}
+
+```
+
 ---
 
 # 13. Создать валидацию
@@ -459,6 +494,12 @@ PATCH:
   }
 }
 ```
+
+---
+
+## 14.1 car_service.go
+
+если есть привязка с Car добавляем в car_service.go
 
 ---
 

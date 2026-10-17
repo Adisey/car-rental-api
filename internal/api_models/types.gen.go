@@ -21,16 +21,19 @@ type Brand = NameEntity
 
 // Car defines model for Car.
 type Car struct {
-	BodyType    *CodeReference `json:"body_type,omitempty"`
-	Brand       *NameReference `json:"brand,omitempty"`
-	Color       *CarColor      `json:"color,omitempty"`
-	CreatedAt   time.Time      `json:"created_at"`
-	Description *string        `json:"description,omitempty"`
-	Id          string         `json:"id"`
-	Model       *Model         `json:"model,omitempty"`
-	Name        string         `json:"name"`
-	PowerHp     *string        `json:"power_hp,omitempty"`
-	UpdatedAt   time.Time      `json:"updated_at"`
+	BodyType         *CodeReference `json:"body_type,omitempty"`
+	Brand            *NameReference `json:"brand,omitempty"`
+	Color            *CarColor      `json:"color,omitempty"`
+	CreatedAt        time.Time      `json:"created_at"`
+	Description      *string        `json:"description,omitempty"`
+	DriveType        *CodeReference `json:"drive_type,omitempty"`
+	FuelType         *CodeReference `json:"fuel_type,omitempty"`
+	Id               string         `json:"id"`
+	Model            *Model         `json:"model,omitempty"`
+	Name             string         `json:"name"`
+	PowerHp          *string        `json:"power_hp,omitempty"`
+	TransmissionType *CodeReference `json:"transmission_type,omitempty"`
+	UpdatedAt        time.Time      `json:"updated_at"`
 }
 
 // CarColor defines model for CarColor.
@@ -92,13 +95,16 @@ type CreateBrandRequest = CreateNameEntityRequest
 
 // CreateCarRequest defines model for CreateCarRequest.
 type CreateCarRequest struct {
-	BodyType    *CodeReference `json:"body_type,omitempty"`
-	Brand       *NameReference `json:"brand,omitempty"`
-	Color       *CarColor      `json:"color,omitempty"`
-	Description *string        `json:"description,omitempty"`
-	Model       *CarModel      `json:"model,omitempty"`
-	Name        string         `json:"name"`
-	PowerHp     *string        `json:"power_hp,omitempty"`
+	BodyType         *CodeReference `json:"body_type,omitempty"`
+	Brand            *NameReference `json:"brand,omitempty"`
+	Color            *CarColor      `json:"color,omitempty"`
+	Description      *string        `json:"description,omitempty"`
+	DriveType        *CodeReference `json:"drive_type,omitempty"`
+	FuelType         *CodeReference `json:"fuel_type,omitempty"`
+	Model            *CarModel      `json:"model,omitempty"`
+	Name             string         `json:"name"`
+	PowerHp          *string        `json:"power_hp,omitempty"`
+	TransmissionType *CodeReference `json:"transmission_type,omitempty"`
 }
 
 // CreateCodeEntityRequest defines model for CreateCodeEntityRequest.
@@ -112,6 +118,12 @@ type CreateColorRequest struct {
 	Hex  *string `json:"hex,omitempty"`
 }
 
+// CreateDriveTypeRequest defines model for CreateDriveTypeRequest.
+type CreateDriveTypeRequest = CreateCodeEntityRequest
+
+// CreateFuelTypeRequest defines model for CreateFuelTypeRequest.
+type CreateFuelTypeRequest = CreateCodeEntityRequest
+
 // CreateModelRequest defines model for CreateModelRequest.
 type CreateModelRequest struct {
 	Brand *NameReference `json:"brand,omitempty"`
@@ -122,6 +134,15 @@ type CreateModelRequest struct {
 type CreateNameEntityRequest struct {
 	Name string `json:"name"`
 }
+
+// CreateTransmissionTypeRequest defines model for CreateTransmissionTypeRequest.
+type CreateTransmissionTypeRequest = CreateCodeEntityRequest
+
+// DriveType defines model for DriveType.
+type DriveType = CodeEntity
+
+// FuelType defines model for FuelType.
+type FuelType = CodeEntity
 
 // HealthResponse defines model for HealthResponse.
 type HealthResponse struct {
@@ -172,6 +193,9 @@ type NameReference struct {
 	Name *string `json:"name,omitempty"`
 }
 
+// TransmissionType defines model for TransmissionType.
+type TransmissionType = CodeEntity
+
 // UpdateBodyTypeRequest defines model for UpdateBodyTypeRequest.
 type UpdateBodyTypeRequest = UpdateCodeEntityRequest
 
@@ -200,12 +224,15 @@ type UpdateCarRequest struct {
 	//   uses existing brand
 	// brand.name:
 	//   finds existing brand by name or creates new one
-	Brand       *NameReference `json:"brand,omitempty"`
-	Color       *CarColor      `json:"color,omitempty"`
-	Description *string        `json:"description,omitempty"`
-	Model       *CarModel      `json:"model,omitempty"`
-	Name        *string        `json:"name,omitempty"`
-	PowerHp     *string        `json:"power_hp,omitempty"`
+	Brand            *NameReference `json:"brand,omitempty"`
+	Color            *CarColor      `json:"color,omitempty"`
+	Description      *string        `json:"description,omitempty"`
+	DriveType        *CodeReference `json:"drive_type,omitempty"`
+	FuelType         *CodeReference `json:"fuel_type,omitempty"`
+	Model            *CarModel      `json:"model,omitempty"`
+	Name             *string        `json:"name,omitempty"`
+	PowerHp          *string        `json:"power_hp,omitempty"`
+	TransmissionType *CodeReference `json:"transmission_type,omitempty"`
 }
 
 // UpdateCodeEntityRequest defines model for UpdateCodeEntityRequest.
@@ -220,6 +247,12 @@ type UpdateColorRequest struct {
 	Hex  *string `json:"hex,omitempty"`
 }
 
+// UpdateDriveTypeRequest defines model for UpdateDriveTypeRequest.
+type UpdateDriveTypeRequest = UpdateCodeEntityRequest
+
+// UpdateFuelTypeRequest defines model for UpdateFuelTypeRequest.
+type UpdateFuelTypeRequest = UpdateCodeEntityRequest
+
 // UpdateModelRequest defines model for UpdateModelRequest.
 type UpdateModelRequest struct {
 	Brand *NameReference `json:"brand,omitempty"`
@@ -230,6 +263,9 @@ type UpdateModelRequest struct {
 type UpdateNameEntityRequest struct {
 	Name *string `json:"name,omitempty"`
 }
+
+// UpdateTransmissionTypeRequest defines model for UpdateTransmissionTypeRequest.
+type UpdateTransmissionTypeRequest = UpdateCodeEntityRequest
 
 // GetModelsParams defines parameters for GetModels.
 type GetModelsParams struct {
@@ -260,8 +296,26 @@ type CreateColorJSONRequestBody = CreateColorRequest
 // UpdateColorJSONRequestBody defines body for UpdateColor for application/json ContentType.
 type UpdateColorJSONRequestBody = UpdateColorRequest
 
+// DriveTypeJSONRequestBody defines body for DriveType for application/json ContentType.
+type DriveTypeJSONRequestBody = CreateDriveTypeRequest
+
+// UpdateDriveTypeJSONRequestBody defines body for UpdateDriveType for application/json ContentType.
+type UpdateDriveTypeJSONRequestBody = UpdateDriveTypeRequest
+
+// CreateFuelTypeJSONRequestBody defines body for CreateFuelType for application/json ContentType.
+type CreateFuelTypeJSONRequestBody = CreateFuelTypeRequest
+
+// UpdateFuelTypeJSONRequestBody defines body for UpdateFuelType for application/json ContentType.
+type UpdateFuelTypeJSONRequestBody = UpdateFuelTypeRequest
+
 // CreateModelJSONRequestBody defines body for CreateModel for application/json ContentType.
 type CreateModelJSONRequestBody = CreateModelRequest
 
 // UpdateModelJSONRequestBody defines body for UpdateModel for application/json ContentType.
 type UpdateModelJSONRequestBody = UpdateModelRequest
+
+// CreateTransmissionTypeJSONRequestBody defines body for CreateTransmissionType for application/json ContentType.
+type CreateTransmissionTypeJSONRequestBody = CreateTransmissionTypeRequest
+
+// UpdateTransmissionTypeJSONRequestBody defines body for UpdateTransmissionType for application/json ContentType.
+type UpdateTransmissionTypeJSONRequestBody = UpdateTransmissionTypeRequest
