@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Adisey/car-rental-api/internal/validation"
+	shared_validation "github.com/Adisey/car-rental-api/internal/shared/validation"
 )
 
 func HandleApiError(
@@ -16,7 +16,7 @@ func HandleApiError(
 
 	log.Printf("HandleApiError: %v", err)
 
-	var validationResult *validation.ValidationResult
+	var validationResult *shared_validation.ValidationResult
 
 	if stdErrors.As(err, &validationResult) {
 

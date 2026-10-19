@@ -7,8 +7,13 @@ import (
 
 	"github.com/joho/godotenv"
 
+	car "github.com/Adisey/car-rental-api/internal/cars"
+	car_body_type "github.com/Adisey/car-rental-api/internal/cars/dictionaries/body_type"
+	car_brand "github.com/Adisey/car-rental-api/internal/cars/dictionaries/brand"
+	car_color "github.com/Adisey/car-rental-api/internal/cars/dictionaries/color"
+	car_model "github.com/Adisey/car-rental-api/internal/cars/dictionaries/model"
 	"github.com/Adisey/car-rental-api/internal/db"
-	"github.com/Adisey/car-rental-api/internal/handlers"
+	"github.com/Adisey/car-rental-api/internal/health"
 )
 
 func main() {
@@ -23,17 +28,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.HandleFunc("/health", handlers.Health)
-	http.HandleFunc("/cars", handlers.CarsMainHandler)
-	http.HandleFunc("/cars/", handlers.CarByIDMainHandler)
-	http.HandleFunc("/colors", handlers.ColorsMainHandler)
-	http.HandleFunc("/colors/", handlers.ColorByIDMainHandler)
-	http.HandleFunc("/body_types", handlers.BodyTypesMainHandler)
-	http.HandleFunc("/body_types/", handlers.BodyTypeByIDMainHandler)
-	http.HandleFunc("/brands", handlers.BrandsMainHandler)
-	http.HandleFunc("/brands/", handlers.BrandByIDMainHandler)
-	http.HandleFunc("/models", handlers.ModelsMainHandler)
-	http.HandleFunc("/models/", handlers.ModelByIDMainHandler)
+	http.HandleFunc("/health", health.Health)
+	http.HandleFunc("/cars", car.CarsMainHandler)
+	http.HandleFunc("/cars/", car.CarByIDMainHandler)
+	http.HandleFunc("/colors", car_color.ColorsMainHandler)
+	http.HandleFunc("/colors/", car_color.ColorByIDMainHandler)
+	http.HandleFunc("/body_types", car_body_type.BodyTypesMainHandler)
+	http.HandleFunc("/body_types/", car_body_type.BodyTypeByIDMainHandler)
+	http.HandleFunc("/brands", car_brand.BrandsMainHandler)
+	http.HandleFunc("/brands/", car_brand.BrandByIDMainHandler)
+	http.HandleFunc("/models", car_model.ModelsMainHandler)
+	http.HandleFunc("/models/", car_model.ModelByIDMainHandler)
 
 	log.Println("Server started on :8080")
 

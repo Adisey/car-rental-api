@@ -1,0 +1,149 @@
+package car
+
+import (
+	"encoding/json"
+	"errors"
+	"net/http"
+	"strings"
+
+	"github.com/Adisey/car-rental-api/internal/api_errors"
+	"github.com/Adisey/car-rental-api/internal/api_models"
+	shared_validation "github.com/Adisey/car-rental-api/internal/shared/validation"
+)
+
+func CarsMainHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		getCarsHandler(w, r)
+
+	case http.MethodPost:
+		createCarHandler(w, r)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func CarByIDMainHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		getCarByIDHandler(w, r)
+
+	case http.MethodPatch:
+		updateCarHandler(w, r)
+
+	case http.MethodDelete:
+		deleteCarHandler(w, r)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func getCarsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	cars, err := GetCarsService(r.Context())
+	if err != nil {
+		api_errors.HandleApiError(w, err)
+		return
+	}
+
+	_ = json.NewEncoder(w).Encode(cars)
+}
+
+func getCarByIDHandler(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(r.URL.Path, "/cars/")
+	car, err := GetCarByIDService(r.Context(), id)
+	if err != nil {
+		api_errors.HandleApiError(w, err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(car)
+}
+
+func createCarHandler(w http.ResponseWriter, r *http.Request) {
+	var request api_models.CreateCarRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"error": "invalid request",
+		})
+		return
+	}
+	car, err := CreateCarService(
+		r.Context(),
+		request,
+	)
+	if err != nil {
+		var validationResult *shared_validation.ValidationResult
+		if errors.As(err, &validationResult) {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(
+				validationResult.Response(),
+			)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	_ = json.NewEncoder(w).Encode(car)
+}
+
+func updateCarHandler(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(r.URL.Path, "/cars/")
+	var request api_models.UpdateCarRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"error": "invalid request",
+		})
+		return
+	}
+	car, err := UpdateCarService(
+		r.Context(),
+		id,
+		request,
+	)
+	if err != nil {
+		var validationResult *shared_validation.ValidationResult
+		if errors.As(err, &validationResult) {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(
+				validationResult.Response(),
+			)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+	_ = json.NewEncoder(w).Encode(car)
+}
+
+func deleteCarHandler(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(
+		r.URL.Path,
+		"/cars/",
+	)
+	err := DeleteCarService(
+		r.Context(),
+		id,
+	)
+	if err != nil {
+		api_errors.HandleApiError(w, err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
