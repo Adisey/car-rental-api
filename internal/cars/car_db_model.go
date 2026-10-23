@@ -15,7 +15,7 @@ import (
 )
 
 type CarDBModel struct {
-	bun.BaseModel `bun:"table:cars"`
+	bun.BaseModel `bun:"table:cars,alias:cars"`
 
 	ID               uuid.UUID                                      `bun:",pk,type:uuid,default:gen_random_uuid()"`
 	Name             string                                         `bun:"type:text,notnull"`

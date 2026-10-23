@@ -18,7 +18,7 @@ func NewFuelTypeRepository() *BunFuelTypeRepository {
 	return &BunFuelTypeRepository{}
 }
 
-func (r *BunFuelTypeRepository) GetAll(ctx context.Context) ([]FuelTypeDBModel, error) {
+func (r *BunFuelTypeRepository) GetFuelTypeAllRepository(ctx context.Context) ([]FuelTypeDBModel, error) {
 	var fuelTypes []FuelTypeDBModel
 	err := db.BunDB.NewSelect().
 		Model(&fuelTypes).
@@ -27,7 +27,7 @@ func (r *BunFuelTypeRepository) GetAll(ctx context.Context) ([]FuelTypeDBModel, 
 	return fuelTypes, err
 }
 
-func (r *BunFuelTypeRepository) GetByIDRepository(
+func (r *BunFuelTypeRepository) GetFuelTypeByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*FuelTypeDBModel, error) {
@@ -45,7 +45,7 @@ func (r *BunFuelTypeRepository) GetByIDRepository(
 	return fuelType, nil
 }
 
-func (r *BunFuelTypeRepository) CreateRepository(
+func (r *BunFuelTypeRepository) CreateFuelTypeRepository(
 	ctx context.Context,
 	fuelType *FuelTypeDBModel,
 ) error {
@@ -55,12 +55,12 @@ func (r *BunFuelTypeRepository) CreateRepository(
 	return err
 }
 
-func (r *BunFuelTypeRepository) UpdateRepository(
+func (r *BunFuelTypeRepository) UpdateFuelTypeRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateFuelTypeRequest,
 ) (*FuelTypeDBModel, error) {
-	fuelType, err := r.GetByIDRepository(ctx, id)
+	fuelType, err := r.GetFuelTypeByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (r *BunFuelTypeRepository) UpdateRepository(
 	return fuelType, nil
 }
 
-func (r *BunFuelTypeRepository) GetByCodeRepository(
+func (r *BunFuelTypeRepository) GetFuelTypeByCodeRepository(
 	ctx context.Context,
 	code string,
 ) (*FuelTypeDBModel, error) {

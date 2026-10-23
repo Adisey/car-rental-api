@@ -1,4 +1,4 @@
-package car_body_type
+package car_body
 
 import (
 	"context"
@@ -20,7 +20,7 @@ func ResolveBodyTypeID(
 	if item.Id != nil {
 		itemID, err := uuid.Parse(*item.Id)
 		if err == nil {
-			existItem, err := repo.GetByIDRepository(
+			existItem, err := repo.GetBodyTypeByIDRepository(
 				ctx,
 				itemID,
 			)
@@ -39,7 +39,7 @@ func ResolveBodyTypeID(
 		}
 	}
 	if item.Code != nil {
-		existItem, err := repo.GetByCodeRepository(
+		existItem, err := repo.GetBodyTypeByCodeRepository(
 			ctx,
 			*item.Code,
 		)
@@ -49,7 +49,7 @@ func ResolveBodyTypeID(
 		newItem := &BodyTypeDBModel{
 			Code: *item.Code,
 		}
-		err = repo.CreateRepository(
+		err = repo.CreateBodyTypeRepository(
 			ctx,
 			newItem,
 		)

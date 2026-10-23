@@ -20,7 +20,7 @@ func ResolveFuelTypeID(
 	if item.Id != nil {
 		itemID, err := uuid.Parse(*item.Id)
 		if err == nil {
-			existItem, err := repo.GetByIDRepository(
+			existItem, err := repo.GetFuelTypeByIDRepository(
 				ctx,
 				itemID,
 			)
@@ -39,7 +39,7 @@ func ResolveFuelTypeID(
 		}
 	}
 	if item.Code != nil {
-		existItem, err := repo.GetByCodeRepository(
+		existItem, err := repo.GetFuelTypeByCodeRepository(
 			ctx,
 			*item.Code,
 		)
@@ -49,7 +49,7 @@ func ResolveFuelTypeID(
 		newItem := &FuelTypeDBModel{
 			Code: *item.Code,
 		}
-		err = repo.CreateRepository(
+		err = repo.CreateFuelTypeRepository(
 			ctx,
 			newItem,
 		)

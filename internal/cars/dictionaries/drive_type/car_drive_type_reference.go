@@ -20,7 +20,7 @@ func ResolveDriveTypeID(
 	if item.Id != nil {
 		itemID, err := uuid.Parse(*item.Id)
 		if err == nil {
-			existItem, err := repo.GetByIDRepository(
+			existItem, err := repo.GetDriveTypeByIDRepository(
 				ctx,
 				itemID,
 			)
@@ -39,7 +39,7 @@ func ResolveDriveTypeID(
 		}
 	}
 	if item.Code != nil {
-		existItem, err := repo.GetByCodeRepository(
+		existItem, err := repo.GetDriveTypeByCodeRepository(
 			ctx,
 			*item.Code,
 		)
@@ -49,7 +49,7 @@ func ResolveDriveTypeID(
 		newItem := &DriveTypeDBModel{
 			Code: *item.Code,
 		}
-		err = repo.CreateRepository(
+		err = repo.CreateDriveTypeRepository(
 			ctx,
 			newItem,
 		)

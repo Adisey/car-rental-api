@@ -3,6 +3,7 @@ package car
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"strings"
 
@@ -47,7 +48,6 @@ func getCarsHandler(w http.ResponseWriter, r *http.Request) {
 		api_errors.HandleApiError(w, err)
 		return
 	}
-
 	_ = json.NewEncoder(w).Encode(cars)
 }
 
@@ -71,10 +71,13 @@ func createCarHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	log.Println("createCarHandler->", request)
 	car, err := CreateCarService(
 		r.Context(),
 		request,
 	)
+
 	if err != nil {
 		var validationResult *shared_validation.ValidationResult
 		if errors.As(err, &validationResult) {

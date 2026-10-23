@@ -6,12 +6,13 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
+	shared_validation "github.com/Adisey/car-rental-api/internal/shared/validation"
 )
 
 func GetBrandsService(ctx context.Context) ([]api_models.Brand, error) {
 	repo := NewBrandRepository()
 
-	dbBrands, err := repo.GetAll(ctx)
+	dbBrands, err := repo.GetBrandAll(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -32,14 +33,14 @@ func GetBrandByIDService(
 	ctx context.Context,
 	id string,
 ) (*api_models.Brand, error) {
-	repo := NewBrandRepository()
 
 	brandID, err := uuid.Parse(id)
 	if err != nil {
 		return nil, err
 	}
+	repo := NewBrandRepository()
 
-	dbBrand, err := repo.GetByIDRepository(ctx, brandID)
+	dbBrand, err := repo.GetBrandByIDRepository(ctx, brandID)
 	if err != nil {
 		return nil, err
 	}
@@ -52,10 +53,10 @@ func GetBrandByIDService(
 
 func CreateBrandService(
 	ctx context.Context,
-	request api_models.CreateBrandRequest,
+	request api_models.CreateNameEntityRequest,
 ) (*api_models.Brand, error) {
 
-	validationResult := ValidateCreateBrandRequest(
+	validationResult := shared_validation.ValidateCreateNameRequest(
 		request,
 	)
 
@@ -65,7 +66,7 @@ func CreateBrandService(
 
 	repo := NewBrandRepository()
 
-	existingBrand, errExist := repo.GetByNameRepository(
+	existingBrand, errExist := repo.GetBrandByNameRepository(
 		ctx,
 		request.Name,
 	)
@@ -81,7 +82,7 @@ func CreateBrandService(
 		Name: request.Name,
 	}
 
-	errNew := repo.CreateRepository(ctx, brand)
+	errNew := repo.CreateBrandRepository(ctx, brand)
 	if errNew != nil {
 		return nil, errNew
 	}
@@ -95,7 +96,7 @@ func CreateBrandService(
 func UpdateBrandService(
 	ctx context.Context,
 	id string,
-	request api_models.UpdateBrandRequest,
+	request api_models.UpdateNameEntityRequest,
 ) (*api_models.Brand, error) {
 
 	repo := NewBrandRepository()
@@ -105,13 +106,13 @@ func UpdateBrandService(
 		return nil, errId
 	}
 
-	validationResult := ValidateUpdateBrandRequest(
+	validationResult := shared_validation.ValidateUpdateNameRequest(
 		request,
 	)
 
 	if request.Name != nil {
 
-		existingBrand, err := repo.GetByNameRepository(
+		existingBrand, err := repo.GetBrandByNameRepository(
 			ctx,
 			*request.Name,
 		)
@@ -131,7 +132,7 @@ func UpdateBrandService(
 		return nil, validationResult
 	}
 
-	brand, errUpdate := repo.UpdateRepository(
+	brand, errUpdate := repo.UpdateBrandRepository(
 		ctx,
 		brandID,
 		request,

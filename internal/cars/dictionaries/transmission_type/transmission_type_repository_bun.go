@@ -1,4 +1,4 @@
-package car_transmission_type
+package car_transmission
 
 import (
 	"context"
@@ -18,7 +18,7 @@ func NewTransmissionTypeRepository() *BunTransmissionTypeRepository {
 	return &BunTransmissionTypeRepository{}
 }
 
-func (r *BunTransmissionTypeRepository) GetAll(ctx context.Context) ([]TransmissionTypeDBModel, error) {
+func (r *BunTransmissionTypeRepository) GetTransmissionTypeAllRepository(ctx context.Context) ([]TransmissionTypeDBModel, error) {
 	var transmissionTypes []TransmissionTypeDBModel
 	err := db.BunDB.NewSelect().
 		Model(&transmissionTypes).
@@ -27,7 +27,7 @@ func (r *BunTransmissionTypeRepository) GetAll(ctx context.Context) ([]Transmiss
 	return transmissionTypes, err
 }
 
-func (r *BunTransmissionTypeRepository) GetByIDRepository(
+func (r *BunTransmissionTypeRepository) GetTransmissionTypeByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*TransmissionTypeDBModel, error) {
@@ -45,7 +45,7 @@ func (r *BunTransmissionTypeRepository) GetByIDRepository(
 	return transmissionType, nil
 }
 
-func (r *BunTransmissionTypeRepository) CreateRepository(
+func (r *BunTransmissionTypeRepository) CreateTransmissionTypeRepository(
 	ctx context.Context,
 	transmissionType *TransmissionTypeDBModel,
 ) error {
@@ -55,12 +55,12 @@ func (r *BunTransmissionTypeRepository) CreateRepository(
 	return err
 }
 
-func (r *BunTransmissionTypeRepository) UpdateRepository(
+func (r *BunTransmissionTypeRepository) UpdateTransmissionTypeRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateTransmissionTypeRequest,
 ) (*TransmissionTypeDBModel, error) {
-	transmissionType, err := r.GetByIDRepository(ctx, id)
+	transmissionType, err := r.GetTransmissionTypeByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (r *BunTransmissionTypeRepository) UpdateRepository(
 	return transmissionType, nil
 }
 
-func (r *BunTransmissionTypeRepository) GetByCodeRepository(
+func (r *BunTransmissionTypeRepository) GetTransmissionTypeByCodeRepository(
 	ctx context.Context,
 	code string,
 ) (*TransmissionTypeDBModel, error) {

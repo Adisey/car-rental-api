@@ -6,7 +6,7 @@ import (
 )
 
 type ColorDBModel struct {
-	bun.BaseModel `bun:"table:colors"`
+	bun.BaseModel `bun:"table:colors,alias:colors"`
 
 	ID   uuid.UUID `bun:",pk,type:uuid,default:gen_random_uuid()"`
 	Code string    `bun:"type:text,notnull,unique:idx_colors_code"`

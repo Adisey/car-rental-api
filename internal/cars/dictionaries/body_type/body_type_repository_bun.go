@@ -1,4 +1,4 @@
-package car_body_type
+package car_body
 
 import (
 	"context"
@@ -18,7 +18,7 @@ func NewBodyTypeRepository() *BunBodyTypeRepository {
 	return &BunBodyTypeRepository{}
 }
 
-func (r *BunBodyTypeRepository) GetAll(ctx context.Context) ([]BodyTypeDBModel, error) {
+func (r *BunBodyTypeRepository) GetBodyTypeAll(ctx context.Context) ([]BodyTypeDBModel, error) {
 	var bodyTypes []BodyTypeDBModel
 	err := db.BunDB.NewSelect().
 		Model(&bodyTypes).
@@ -27,7 +27,7 @@ func (r *BunBodyTypeRepository) GetAll(ctx context.Context) ([]BodyTypeDBModel, 
 	return bodyTypes, err
 }
 
-func (r *BunBodyTypeRepository) GetByIDRepository(
+func (r *BunBodyTypeRepository) GetBodyTypeByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*BodyTypeDBModel, error) {
@@ -45,7 +45,7 @@ func (r *BunBodyTypeRepository) GetByIDRepository(
 	return bodyType, nil
 }
 
-func (r *BunBodyTypeRepository) CreateRepository(
+func (r *BunBodyTypeRepository) CreateBodyTypeRepository(
 	ctx context.Context,
 	bodyType *BodyTypeDBModel,
 ) error {
@@ -55,12 +55,12 @@ func (r *BunBodyTypeRepository) CreateRepository(
 	return err
 }
 
-func (r *BunBodyTypeRepository) UpdateRepository(
+func (r *BunBodyTypeRepository) UpdateBodyTypeRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateBodyTypeRequest,
 ) (*BodyTypeDBModel, error) {
-	bodyType, err := r.GetByIDRepository(ctx, id)
+	bodyType, err := r.GetBodyTypeByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (r *BunBodyTypeRepository) UpdateRepository(
 	return bodyType, nil
 }
 
-func (r *BunBodyTypeRepository) GetByCodeRepository(
+func (r *BunBodyTypeRepository) GetBodyTypeByCodeRepository(
 	ctx context.Context,
 	code string,
 ) (*BodyTypeDBModel, error) {

@@ -20,7 +20,7 @@ func ResolveBrandID(
 	if brand.Id != nil {
 		brandID, err := uuid.Parse(*brand.Id)
 		if err == nil {
-			existingBrand, err := brandRepo.GetByIDRepository(
+			existingBrand, err := brandRepo.GetBrandByIDRepository(
 				ctx,
 				brandID,
 			)
@@ -39,7 +39,7 @@ func ResolveBrandID(
 		}
 	}
 	if brand.Name != nil {
-		existingBrand, err := brandRepo.GetByNameRepository(
+		existingBrand, err := brandRepo.GetBrandByNameRepository(
 			ctx,
 			*brand.Name,
 		)
@@ -49,7 +49,7 @@ func ResolveBrandID(
 		newBrand := &BrandDBModel{
 			Name: *brand.Name,
 		}
-		err = brandRepo.CreateRepository(
+		err = brandRepo.CreateBrandRepository(
 			ctx,
 			newBrand,
 		)

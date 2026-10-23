@@ -17,7 +17,7 @@ func NewModelRepository() *BunModelRepository {
 	return &BunModelRepository{}
 }
 
-func (r *BunModelRepository) GetAllRepository(
+func (r *BunModelRepository) GetModelAllRepository(
 	ctx context.Context,
 	brandID *uuid.UUID,
 ) ([]ModelDBModel, error) {
@@ -40,7 +40,7 @@ func (r *BunModelRepository) GetAllRepository(
 	return models, err
 }
 
-func (r *BunModelRepository) GetByIDRepository(
+func (r *BunModelRepository) GetModelByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*ModelDBModel, error) {
@@ -50,7 +50,7 @@ func (r *BunModelRepository) GetByIDRepository(
 	err := db.BunDB.NewSelect().
 		Model(model).
 		Relation("Brand").
-		Where("model.id = ?", id).
+		Where("models.id = ?", id).
 		Scan(ctx)
 
 	if errors.Is(err, sql.ErrNoRows) {
@@ -64,7 +64,7 @@ func (r *BunModelRepository) GetByIDRepository(
 	return model, nil
 }
 
-func (r *BunModelRepository) GetByNameRepository(
+func (r *BunModelRepository) GetModelByNameRepository(
 	ctx context.Context,
 	name string,
 	brandID *uuid.UUID,
@@ -72,16 +72,19 @@ func (r *BunModelRepository) GetByNameRepository(
 
 	model := new(ModelDBModel)
 
+	println("GetByNameRepository-brandID->", brandID)
 	query := db.BunDB.NewSelect().
 		Model(model).
 		Relation("Brand").
-		Where("LOWER(model.name) = LOWER(?)", name)
+		Where("LOWER(models.name) = LOWER(?)", name)
 
+	println("GetByNameRepository-query-1->", query.String())
 	if brandID != nil {
-		query = query.Where("model.brand_id = ?", brandID)
+		query = query.Where("models.brand_id = ?", brandID)
 	}
-
+	println("GetByNameRepository-query-2->", query.String())
 	err := query.Scan(ctx)
+	println("GetByNameRepository-err->", err)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, api_errors.ErrNotFound
@@ -106,7 +109,7 @@ func (r *BunModelRepository) CreateRepository(
 	return err
 }
 
-func (r *BunModelRepository) UpdateRepository(
+func (r *BunModelRepository) UpdateModelRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateModelRequest,
@@ -114,7 +117,7 @@ func (r *BunModelRepository) UpdateRepository(
 	shouldUpdateBrand bool,
 ) (*ModelDBModel, error) {
 
-	model, err := r.GetByIDRepository(
+	model, err := r.GetModelByIDRepository(
 		ctx,
 		id,
 	)

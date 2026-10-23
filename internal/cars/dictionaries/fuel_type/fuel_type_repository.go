@@ -11,22 +11,22 @@ import (
 type FuelTypeRepository interface {
 	GetAllRepository(ctx context.Context) ([]FuelTypeDBModel, error)
 
-	GetByIDRepository(
+	GetFuelTypeByIDRepository(
 		ctx context.Context,
 		id uuid.UUID,
 	) (*FuelTypeDBModel, error)
 
-	GetByCodeRepository(
+	GetFuelTypeByCodeRepository(
 		ctx context.Context,
 		code string,
 	) (*FuelTypeDBModel, error)
 
-	CreateRepository(
+	CreateFuelTypeRepository(
 		ctx context.Context,
 		FuelType *FuelTypeDBModel,
 	) error
 
-	UpdateRepository(
+	UpdateFuelTypeRepository(
 		ctx context.Context,
 		id uuid.UUID,
 		request api_models.UpdateFuelTypeRequest,

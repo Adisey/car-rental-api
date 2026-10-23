@@ -7,15 +7,15 @@ import (
 	shared_validation "github.com/Adisey/car-rental-api/internal/shared/validation"
 )
 
-var ColorRules = struct {
-	Code        shared_validation.StringRule
-	Description shared_validation.StringRule
-}{
-	Code: shared_validation.StringRule{
-		MinLength: 3,
-		MaxLength: 100,
-	},
-}
+// var ColorRules = struct {
+// 	Code shared_validation.StringRule
+// 	Hex  shared_validation.StringRule
+// }{
+// 	Code: shared_validation.StringRule{
+// 		MinLength: 3,
+// 		MaxLength: 100,
+// 	},
+// }
 
 func ValidateCreateColorRequest(
 	request api_models.CreateColorRequest,
@@ -33,22 +33,22 @@ func ValidateCreateColorRequest(
 		)
 	}
 
-	if len(code) < ColorRules.Code.MinLength {
+	if len(code) < shared_validation.CodeEntityRules.Code.MinLength {
 		result.Add(
 			"code",
 			"min_length",
 			map[string]any{
-				"min": ColorRules.Code.MinLength,
+				"min": shared_validation.CodeEntityRules.Code.MinLength,
 			},
 		)
 	}
 
-	if len(code) > ColorRules.Code.MaxLength {
+	if len(code) > shared_validation.CodeEntityRules.Code.MaxLength {
 		result.Add(
 			"code",
 			"max_length",
 			map[string]any{
-				"max": ColorRules.Code.MaxLength,
+				"max": shared_validation.CodeEntityRules.Code.MaxLength,
 			},
 		)
 	}
@@ -73,22 +73,22 @@ func ValidateUpdateColorRequest(
 			)
 		}
 
-		if len(code) < ColorRules.Code.MinLength {
+		if len(code) < shared_validation.CodeEntityRules.Code.MinLength {
 			result.Add(
 				"code",
 				"min_length",
 				map[string]any{
-					"min": ColorRules.Code.MinLength,
+					"min": shared_validation.CodeEntityRules.Code.MinLength,
 				},
 			)
 		}
 
-		if len(code) > ColorRules.Code.MaxLength {
+		if len(code) > shared_validation.CodeEntityRules.Code.MaxLength {
 			result.Add(
 				"code",
 				"max_length",
 				map[string]any{
-					"max": ColorRules.Code.MaxLength,
+					"max": shared_validation.CodeEntityRules.Code.MaxLength,
 				},
 			)
 		}

@@ -9,24 +9,24 @@ import (
 )
 
 type BrandRepository interface {
-	GetAllRepository(ctx context.Context) ([]BrandDBModel, error)
+	GetBrandAllRepository(ctx context.Context) ([]BrandDBModel, error)
 
-	GetByIDRepository(
+	GetBrandByIDRepository(
 		ctx context.Context,
 		id uuid.UUID,
 	) (*BrandDBModel, error)
 
-	GetByNameRepository(
+	GetBrandByNameRepository(
 		ctx context.Context,
 		name string,
 	) (*BrandDBModel, error)
 
-	CreateRepository(
+	CreateBrandRepository(
 		ctx context.Context,
 		Brand *BrandDBModel,
 	) error
 
-	UpdateRepository(
+	UpdateBrandRepository(
 		ctx context.Context,
 		id uuid.UUID,
 		request api_models.UpdateBrandRequest,

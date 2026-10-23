@@ -5,18 +5,20 @@ import (
 	"os"
 
 	"ariga.io/atlas-provider-bun/bunschema"
-
-	"github.com/Adisey/car-rental-api/internal/db_models"
+	car "github.com/Adisey/car-rental-api/internal/cars"
+	car_body_type "github.com/Adisey/car-rental-api/internal/cars/dictionaries/body_type"
+	car_brand "github.com/Adisey/car-rental-api/internal/cars/dictionaries/brand"
+	car_color "github.com/Adisey/car-rental-api/internal/cars/dictionaries/color"
 )
 
 func main() {
 	stmts, err := bunschema.New(
 		bunschema.DialectPostgres,
 	).Load(
-		&db_models.Car{},
-		&db_models.Color{},
-		&db_models.BodyType{},
-		&db_models.Brand{},
+		&car.Car{},
+		&car_color.Color{},
+		&car_body_type.BodyType{},
+		&car_brand.Brand{},
 		&db_models.DriveType{},
 		&db_models.FuelType{},
 		&db_models.Model{},

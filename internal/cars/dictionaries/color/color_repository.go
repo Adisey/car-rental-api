@@ -9,24 +9,24 @@ import (
 )
 
 type ColorRepository interface {
-	GetAllRepository(ctx context.Context) ([]ColorDBModel, error)
+	GetColorAllRepository(ctx context.Context) ([]ColorDBModel, error)
 
-	GetByIDRepository(
+	GetColorByIDRepository(
 		ctx context.Context,
 		id uuid.UUID,
 	) (*ColorDBModel, error)
 
-	GetByCodeRepository(
+	GetColorByCodeRepository(
 		ctx context.Context,
 		code string,
 	) (*ColorDBModel, error)
 
-	CreateRepository(
+	CreateColorRepository(
 		ctx context.Context,
 		color *ColorDBModel,
 	) error
 
-	UpdateRepository(
+	UpdateColorRepository(
 		ctx context.Context,
 		id uuid.UUID,
 		request api_models.UpdateColorRequest,

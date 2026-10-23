@@ -17,7 +17,7 @@ var BodyTypeRules = struct {
 	},
 }
 
-func ValidateCreateBodyTypeRequest(
+func ValidateCreateBody___________TypeRequest(
 	request api_models.CreateBodyTypeRequest,
 ) *shared_validation.ValidationResult {
 
@@ -56,7 +56,7 @@ func ValidateCreateBodyTypeRequest(
 	return result
 }
 
-func ValidateUpdateBodyTypeRequest(
+func ValidateUpdateBody__________TypeRequest(
 	request api_models.UpdateBodyTypeRequest,
 ) *shared_validation.ValidationResult {
 

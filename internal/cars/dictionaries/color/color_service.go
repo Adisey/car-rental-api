@@ -11,7 +11,7 @@ import (
 func GetColorsService(ctx context.Context) ([]api_models.Color, error) {
 	repo := NewColorRepository()
 
-	dbColors, err := repo.GetAll(ctx)
+	dbColors, err := repo.GetColorAll(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func GetColorByIDService(
 		return nil, err
 	}
 
-	dbColor, err := repo.GetByIDRepository(ctx, colorID)
+	dbColor, err := repo.GetColorByIDRepository(ctx, colorID)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func CreateColorService(
 
 	repo := NewColorRepository()
 
-	existingColor, errExist := repo.GetByCodeRepository(
+	existingColor, errExist := repo.GetColorByCodeRepository(
 		ctx,
 		request.Code,
 	)
@@ -84,7 +84,7 @@ func CreateColorService(
 		Hex:  request.Hex,
 	}
 
-	errNew := repo.CreateRepository(ctx, color)
+	errNew := repo.CreateColorRepository(ctx, color)
 	if errNew != nil {
 		return nil, errNew
 	}
@@ -115,7 +115,7 @@ func UpdateColorService(
 
 	if request.Code != nil {
 
-		existingColor, err := repo.GetByCodeRepository(
+		existingColor, err := repo.GetColorByCodeRepository(
 			ctx,
 			*request.Code,
 		)
@@ -135,7 +135,7 @@ func UpdateColorService(
 		return nil, validationResult
 	}
 
-	color, errUpdate := repo.UpdateRepository(
+	color, errUpdate := repo.UpdateColorRepository(
 		ctx,
 		colorID,
 		request,

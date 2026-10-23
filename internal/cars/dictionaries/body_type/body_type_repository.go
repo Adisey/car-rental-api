@@ -1,4 +1,4 @@
-package car_body_type
+package car_body
 
 import (
 	"context"
@@ -9,24 +9,24 @@ import (
 )
 
 type BodyTypeRepository interface {
-	GetAllRepository(ctx context.Context) ([]BodyTypeDBModel, error)
+	GetBodyTypeAllRepository(ctx context.Context) ([]BodyTypeDBModel, error)
 
-	GetByIDRepository(
+	GetBodyTypeByIDRepository(
 		ctx context.Context,
 		id uuid.UUID,
 	) (*BodyTypeDBModel, error)
 
-	GetByCodeRepository(
+	GetBodyTypeByCodeRepository(
 		ctx context.Context,
 		code string,
 	) (*BodyTypeDBModel, error)
 
-	CreateRepository(
+	CreateBodyTypeRepository(
 		ctx context.Context,
 		BodyType *BodyTypeDBModel,
 	) error
 
-	UpdateRepository(
+	UpdateBodyTypeRepository(
 		ctx context.Context,
 		id uuid.UUID,
 		request api_models.UpdateBodyTypeRequest,

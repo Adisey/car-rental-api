@@ -489,7 +489,7 @@ func (r *BunModelRepository) GetByIDRepository(
 	err := db.BunDB.NewSelect().
 		Model(model).
 		Relation("Brand").
-		Where("model.id = ?", id).
+		Where("models.id = ?", id).
 		Scan(ctx)
 
 	if errors.Is(err, sql.ErrNoRows) {

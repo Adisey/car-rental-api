@@ -1,4 +1,4 @@
-package car_body_type
+package car_body
 
 import (
 	"encoding/json"

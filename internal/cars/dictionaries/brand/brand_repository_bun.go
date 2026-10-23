@@ -18,7 +18,7 @@ func NewBrandRepository() *BunBrandRepository {
 	return &BunBrandRepository{}
 }
 
-func (r *BunBrandRepository) GetAll(ctx context.Context) ([]BrandDBModel, error) {
+func (r *BunBrandRepository) GetBrandAll(ctx context.Context) ([]BrandDBModel, error) {
 	var Brands []BrandDBModel
 
 	err := db.BunDB.NewSelect().
@@ -28,7 +28,7 @@ func (r *BunBrandRepository) GetAll(ctx context.Context) ([]BrandDBModel, error)
 	return Brands, err
 }
 
-func (r *BunBrandRepository) GetByIDRepository(
+func (r *BunBrandRepository) GetBrandByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*BrandDBModel, error) {
@@ -50,7 +50,7 @@ func (r *BunBrandRepository) GetByIDRepository(
 	return Brand, nil
 }
 
-func (r *BunBrandRepository) CreateRepository(
+func (r *BunBrandRepository) CreateBrandRepository(
 	ctx context.Context,
 	Brand *BrandDBModel,
 ) error {
@@ -62,13 +62,13 @@ func (r *BunBrandRepository) CreateRepository(
 	return err
 }
 
-func (r *BunBrandRepository) UpdateRepository(
+func (r *BunBrandRepository) UpdateBrandRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateBrandRequest,
 ) (*BrandDBModel, error) {
 
-	Brand, err := r.GetByIDRepository(ctx, id)
+	Brand, err := r.GetBrandByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (r *BunBrandRepository) UpdateRepository(
 	return Brand, nil
 }
 
-func (r *BunBrandRepository) GetByNameRepository(
+func (r *BunBrandRepository) GetBrandByNameRepository(
 	ctx context.Context,
 	name string,
 ) (*BrandDBModel, error) {

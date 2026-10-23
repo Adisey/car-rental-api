@@ -11,7 +11,7 @@ import (
 
 func GetDriveTypesService(ctx context.Context) ([]api_models.DriveType, error) {
 	repo := NewDriveTypeRepository()
-	dbItems, err := repo.GetAll(ctx)
+	dbItems, err := repo.GetDriveTypeAllRepository(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func GetDriveTypeByIDService(
 	if err != nil {
 		return nil, err
 	}
-	dbItem, err := repo.GetByIDRepository(ctx, itemID)
+	dbItem, err := repo.GetDriveTypeByIDRepository(ctx, itemID)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func CreateDriveTypeService(
 		return nil, validationResult
 	}
 	repo := NewDriveTypeRepository()
-	existItem, errExist := repo.GetByCodeRepository(
+	existItem, errExist := repo.GetDriveTypeByCodeRepository(
 		ctx,
 		request.Code,
 	)
@@ -68,7 +68,7 @@ func CreateDriveTypeService(
 	newItem := &DriveTypeDBModel{
 		Code: request.Code,
 	}
-	errNew := repo.CreateRepository(ctx, newItem)
+	errNew := repo.CreateDriveTypeRepository(ctx, newItem)
 	if errNew != nil {
 		return nil, errNew
 	}
@@ -92,7 +92,7 @@ func UpdateDriveTypeService(
 		request,
 	)
 	if request.Code != nil {
-		existItem, err := repo.GetByCodeRepository(
+		existItem, err := repo.GetDriveTypeByCodeRepository(
 			ctx,
 			*request.Code,
 		)
@@ -109,7 +109,7 @@ func UpdateDriveTypeService(
 	if validationResult.HasErrors() {
 		return nil, validationResult
 	}
-	itemUpdated, errUpdate := repo.UpdateRepository(
+	itemUpdated, errUpdate := repo.UpdateDriveTypeRepository(
 		ctx,
 		itemID,
 		request,

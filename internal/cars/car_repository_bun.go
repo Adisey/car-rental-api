@@ -19,7 +19,7 @@ func NewCarRepository() *BunCarRepository {
 	return &BunCarRepository{}
 }
 
-func (r *BunCarRepository) GetAll(ctx context.Context) ([]CarDBModel, error) {
+func (r *BunCarRepository) GetCarAllRepository(ctx context.Context) ([]CarDBModel, error) {
 	var cars []CarDBModel
 
 	err := db.BunDB.NewSelect().
@@ -38,12 +38,12 @@ func (r *BunCarRepository) GetAll(ctx context.Context) ([]CarDBModel, error) {
 	return cars, err
 }
 
-func (r *BunCarRepository) GetByIDRepository(
+func (r *BunCarRepository) GetCarByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*CarDBModel, error) {
 	car := new(CarDBModel)
-	err := db.BunDB.NewSelect().
+	query := db.BunDB.NewSelect().
 		Model(car).
 		Relation("BodyType").
 		Relation("Brand").
@@ -53,9 +53,10 @@ func (r *BunCarRepository) GetByIDRepository(
 		Relation("Model").
 		Relation("Model.Brand").
 		Relation("TransmissionType").
-		Where("car.id = ?", id).
-		Where("deleted_at IS NULL").
-		Scan(ctx)
+		Where("cars.id = ?", id).
+		Where("deleted_at IS NULL")
+
+	err := query.Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, api_errors.ErrNotFound
 	}
@@ -65,7 +66,7 @@ func (r *BunCarRepository) GetByIDRepository(
 	return car, nil
 }
 
-func (r *BunCarRepository) CreateRepository(
+func (r *BunCarRepository) CreateCarRepository(
 	ctx context.Context,
 	car *CarDBModel,
 ) error {
@@ -92,13 +93,13 @@ type CarRelationsToUpdate struct {
 	UpdateTransmission *bool
 }
 
-func (r *BunCarRepository) UpdateRepository(
+func (r *BunCarRepository) UpdateCarRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateCarRequest,
 	relations CarRelationsToUpdate,
 ) (*CarDBModel, error) {
-	car, err := r.GetByIDRepository(ctx, id)
+	car, err := r.GetCarByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -144,11 +145,11 @@ func (r *BunCarRepository) UpdateRepository(
 	return car, nil
 }
 
-func (r *BunCarRepository) DeleteRepository(
+func (r *BunCarRepository) DeleteCarRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) error {
-	car, err := r.GetByIDRepository(ctx, id)
+	car, err := r.GetCarByIDRepository(ctx, id)
 	if err != nil {
 		return err
 	}

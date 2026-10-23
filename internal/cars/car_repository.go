@@ -9,17 +9,17 @@ import (
 )
 
 type CarRepository interface {
-	GetAllRepository(ctx context.Context) ([]CarDBModel, error)
-	GetByIDRepository(ctx context.Context, id uuid.UUID) (*CarDBModel, error)
-	CreateRepository(ctx context.Context, car *CarDBModel) error
-	UpdateRepository(
+	GetCarAllRepository(ctx context.Context) ([]CarDBModel, error)
+	GetCarByIDRepository(ctx context.Context, id uuid.UUID) (*CarDBModel, error)
+	CreateCarRepository(ctx context.Context, car *CarDBModel) error
+	UpdateCarRepository(
 		ctx context.Context,
 		id uuid.UUID,
 		request api_models.UpdateCarRequest,
 		colorID *uuid.UUID,
 		shouldUpdateColor bool,
 	) (*CarDBModel, error)
-	DeleteRepository(
+	DeleteCarRepository(
 		ctx context.Context,
 		id uuid.UUID,
 	) error

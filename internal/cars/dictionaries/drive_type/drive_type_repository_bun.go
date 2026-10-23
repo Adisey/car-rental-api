@@ -18,7 +18,7 @@ func NewDriveTypeRepository() *BunDriveTypeRepository {
 	return &BunDriveTypeRepository{}
 }
 
-func (r *BunDriveTypeRepository) GetAll(ctx context.Context) ([]DriveTypeDBModel, error) {
+func (r *BunDriveTypeRepository) GetDriveTypeAllRepository(ctx context.Context) ([]DriveTypeDBModel, error) {
 	var driveType []DriveTypeDBModel
 	err := db.BunDB.NewSelect().
 		Model(&driveType).
@@ -27,7 +27,7 @@ func (r *BunDriveTypeRepository) GetAll(ctx context.Context) ([]DriveTypeDBModel
 	return driveType, err
 }
 
-func (r *BunDriveTypeRepository) GetByIDRepository(
+func (r *BunDriveTypeRepository) GetDriveTypeByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*DriveTypeDBModel, error) {
@@ -45,7 +45,7 @@ func (r *BunDriveTypeRepository) GetByIDRepository(
 	return driveType, nil
 }
 
-func (r *BunDriveTypeRepository) CreateRepository(
+func (r *BunDriveTypeRepository) CreateDriveTypeRepository(
 	ctx context.Context,
 	driveType *DriveTypeDBModel,
 ) error {
@@ -55,12 +55,12 @@ func (r *BunDriveTypeRepository) CreateRepository(
 	return err
 }
 
-func (r *BunDriveTypeRepository) UpdateRepository(
+func (r *BunDriveTypeRepository) UpdateDriveTypeRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateDriveTypeRequest,
 ) (*DriveTypeDBModel, error) {
-	driveType, err := r.GetByIDRepository(ctx, id)
+	driveType, err := r.GetDriveTypeByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (r *BunDriveTypeRepository) UpdateRepository(
 	return driveType, nil
 }
 
-func (r *BunDriveTypeRepository) GetByCodeRepository(
+func (r *BunDriveTypeRepository) GetDriveTypeByCodeRepository(
 	ctx context.Context,
 	code string,
 ) (*DriveTypeDBModel, error) {

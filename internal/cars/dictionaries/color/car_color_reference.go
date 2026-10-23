@@ -20,7 +20,7 @@ func ResolveColorID(
 	if color.Id != nil {
 		colorID, err := uuid.Parse(*color.Id)
 		if err == nil {
-			existingColor, err := colorRepo.GetByIDRepository(
+			existingColor, err := colorRepo.GetColorByIDRepository(
 				ctx,
 				colorID,
 			)
@@ -39,7 +39,7 @@ func ResolveColorID(
 		}
 	}
 	if color.Code != nil {
-		existingColor, err := colorRepo.GetByCodeRepository(
+		existingColor, err := colorRepo.GetColorByCodeRepository(
 			ctx,
 			*color.Code,
 		)
@@ -50,7 +50,7 @@ func ResolveColorID(
 			Code: *color.Code,
 			Hex:  color.Hex,
 		}
-		err = colorRepo.CreateRepository(
+		err = colorRepo.CreateColorRepository(
 			ctx,
 			newColor,
 		)

@@ -19,12 +19,13 @@ func ResolveModelID(
 		return nil, nil
 	}
 	modelRepo := NewModelRepository()
+
 	if model.Id != nil {
 		modelID, err := uuid.Parse(
 			*model.Id,
 		)
 		if err == nil {
-			existingModel, err := modelRepo.GetByIDRepository(
+			existingModel, err := modelRepo.GetModelByIDRepository(
 				ctx,
 				modelID,
 			)
@@ -55,11 +56,12 @@ func ResolveModelID(
 			}
 			brandID = resolvedBrandID
 		}
-		existingModel, err := modelRepo.GetByNameRepository(
+		existingModel, err := modelRepo.GetModelByNameRepository(
 			ctx,
 			*model.Name,
 			brandID,
 		)
+		println("model-existingModel->", existingModel)
 		if err == nil {
 			return &existingModel.ID, nil
 		}
@@ -67,10 +69,12 @@ func ResolveModelID(
 			Name:    *model.Name,
 			BrandID: brandID,
 		}
+		println("model-newModel->", newModel)
 		err = modelRepo.CreateRepository(
 			ctx,
 			newModel,
 		)
+		println("model-newModel-err->", err)
 		if err != nil {
 			return nil, err
 		}

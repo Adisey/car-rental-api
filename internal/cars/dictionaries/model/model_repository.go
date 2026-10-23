@@ -9,24 +9,24 @@ import (
 )
 
 type ModelRepository interface {
-	GetAllRepository(ctx context.Context) ([]ModelDBModel, error)
+	GetModelAllRepository(ctx context.Context) ([]ModelDBModel, error)
 
-	GetByIDRepository(
+	GetModelByIDRepository(
 		ctx context.Context,
 		id uuid.UUID,
 	) (*ModelDBModel, error)
 
-	GetByNameRepository(
+	GetModelByNameRepository(
 		ctx context.Context,
 		name string,
 	) (*ModelDBModel, error)
 
-	CreateRepository(
+	CreateModelRepository(
 		ctx context.Context,
 		Model *ModelDBModel,
 	) error
 
-	UpdateRepository(
+	UpdateModelRepository(
 		ctx context.Context,
 		id uuid.UUID,
 		request api_models.UpdateModelRequest,

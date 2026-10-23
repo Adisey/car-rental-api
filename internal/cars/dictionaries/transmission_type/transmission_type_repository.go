@@ -1,4 +1,4 @@
-package car_transmission_type
+package car_transmission
 
 import (
 	"context"
@@ -9,24 +9,24 @@ import (
 )
 
 type TransmissionTypeRepository interface {
-	GetAllRepository(ctx context.Context) ([]TransmissionTypeDBModel, error)
+	GetTransmissionTypeAllRepository(ctx context.Context) ([]TransmissionTypeDBModel, error)
 
-	GetByIDRepository(
+	GetTransmissionTypeByIDRepository(
 		ctx context.Context,
 		id uuid.UUID,
 	) (*TransmissionTypeDBModel, error)
 
-	GetByCodeRepository(
+	GetTransmissionTypeByCodeRepository(
 		ctx context.Context,
 		code string,
 	) (*TransmissionTypeDBModel, error)
 
-	CreateRepository(
+	CreateTransmissionTypeRepository(
 		ctx context.Context,
 		TransmissionType *TransmissionTypeDBModel,
 	) error
 
-	UpdateRepository(
+	UpdateTransmissionTypeRepository(
 		ctx context.Context,
 		id uuid.UUID,
 		request api_models.UpdateTransmissionTypeRequest,

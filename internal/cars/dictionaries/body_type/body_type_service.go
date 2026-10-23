@@ -1,4 +1,4 @@
-package car_body_type
+package car_body
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 
 func GetBodyTypesService(ctx context.Context) ([]api_models.BodyType, error) {
 	repo := NewBodyTypeRepository()
-	dbItems, err := repo.GetAll(ctx)
+	dbItems, err := repo.GetBodyTypeAll(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func GetBodyTypeByIDService(
 	if err != nil {
 		return nil, err
 	}
-	dbItem, err := repo.GetByIDRepository(ctx, itemID)
+	dbItem, err := repo.GetBodyTypeByIDRepository(ctx, itemID)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func CreateBodyTypeService(
 		return nil, validationResult
 	}
 	repo := NewBodyTypeRepository()
-	existItem, errExist := repo.GetByCodeRepository(
+	existItem, errExist := repo.GetBodyTypeByCodeRepository(
 		ctx,
 		request.Code,
 	)
@@ -68,7 +68,7 @@ func CreateBodyTypeService(
 	newItem := &BodyTypeDBModel{
 		Code: request.Code,
 	}
-	errNew := repo.CreateRepository(ctx, newItem)
+	errNew := repo.CreateBodyTypeRepository(ctx, newItem)
 	if errNew != nil {
 		return nil, errNew
 	}
@@ -92,7 +92,7 @@ func UpdateBodyTypeService(
 		request,
 	)
 	if request.Code != nil {
-		existItem, err := repo.GetByCodeRepository(
+		existItem, err := repo.GetBodyTypeByCodeRepository(
 			ctx,
 			*request.Code,
 		)
@@ -109,7 +109,7 @@ func UpdateBodyTypeService(
 	if validationResult.HasErrors() {
 		return nil, validationResult
 	}
-	itemUpdated, errUpdate := repo.UpdateRepository(
+	itemUpdated, errUpdate := repo.UpdateBodyTypeRepository(
 		ctx,
 		itemID,
 		request,

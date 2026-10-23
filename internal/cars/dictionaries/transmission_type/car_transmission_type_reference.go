@@ -1,4 +1,4 @@
-package car_transmission_type
+package car_transmission
 
 import (
 	"context"
@@ -20,7 +20,7 @@ func ResolveTransmissionTypeID(
 	if item.Id != nil {
 		itemID, err := uuid.Parse(*item.Id)
 		if err == nil {
-			existItem, err := repo.GetByIDRepository(
+			existItem, err := repo.GetTransmissionTypeByIDRepository(
 				ctx,
 				itemID,
 			)
@@ -39,7 +39,7 @@ func ResolveTransmissionTypeID(
 		}
 	}
 	if item.Code != nil {
-		existItem, err := repo.GetByCodeRepository(
+		existItem, err := repo.GetTransmissionTypeByCodeRepository(
 			ctx,
 			*item.Code,
 		)
@@ -49,7 +49,7 @@ func ResolveTransmissionTypeID(
 		newItem := &TransmissionTypeDBModel{
 			Code: *item.Code,
 		}
-		err = repo.CreateRepository(
+		err = repo.CreateTransmissionTypeRepository(
 			ctx,
 			newItem,
 		)

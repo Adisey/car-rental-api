@@ -7,7 +7,7 @@ import (
 )
 
 type ModelDBModel struct {
-	bun.BaseModel `bun:"table:models"`
+	bun.BaseModel `bun:"table:models,alias:models"`
 	ID            uuid.UUID               `bun:",pk,type:uuid,default:gen_random_uuid()"`
 	Name          string                  `bun:"type:text,notnull,unique:idx_models_name_brand"`
 	BrandID       *uuid.UUID              `bun:"type:uuid,unique:idx_models_name_brand"`

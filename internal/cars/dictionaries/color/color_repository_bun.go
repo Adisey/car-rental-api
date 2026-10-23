@@ -18,7 +18,7 @@ func NewColorRepository() *BunColorRepository {
 	return &BunColorRepository{}
 }
 
-func (r *BunColorRepository) GetAll(ctx context.Context) ([]ColorDBModel, error) {
+func (r *BunColorRepository) GetColorAll(ctx context.Context) ([]ColorDBModel, error) {
 	var Colors []ColorDBModel
 
 	err := db.BunDB.NewSelect().
@@ -28,7 +28,7 @@ func (r *BunColorRepository) GetAll(ctx context.Context) ([]ColorDBModel, error)
 	return Colors, err
 }
 
-func (r *BunColorRepository) GetByIDRepository(
+func (r *BunColorRepository) GetColorByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*ColorDBModel, error) {
@@ -46,7 +46,7 @@ func (r *BunColorRepository) GetByIDRepository(
 	return Color, nil
 }
 
-func (r *BunColorRepository) CreateRepository(
+func (r *BunColorRepository) CreateColorRepository(
 	ctx context.Context,
 	Color *ColorDBModel,
 ) error {
@@ -57,12 +57,12 @@ func (r *BunColorRepository) CreateRepository(
 	return err
 }
 
-func (r *BunColorRepository) UpdateRepository(
+func (r *BunColorRepository) UpdateColorRepository(
 	ctx context.Context,
 	id uuid.UUID,
 	request api_models.UpdateColorRequest,
 ) (*ColorDBModel, error) {
-	Color, err := r.GetByIDRepository(ctx, id)
+	Color, err := r.GetColorByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (r *BunColorRepository) UpdateRepository(
 	return Color, nil
 }
 
-func (r *BunColorRepository) GetByCodeRepository(
+func (r *BunColorRepository) GetColorByCodeRepository(
 	ctx context.Context,
 	code string,
 ) (*ColorDBModel, error) {

@@ -9,24 +9,24 @@ import (
 )
 
 type DriveTypeRepository interface {
-	GetAllRepository(ctx context.Context) ([]DriveTypeDBModel, error)
+	GetDriveTypeAllRepository(ctx context.Context) ([]DriveTypeDBModel, error)
 
-	GetByIDRepository(
+	GetDriveTypeByIDRepository(
 		ctx context.Context,
 		id uuid.UUID,
 	) (*DriveTypeDBModel, error)
 
-	GetByCodeRepository(
+	GetDriveTypeByCodeRepository(
 		ctx context.Context,
 		code string,
 	) (*DriveTypeDBModel, error)
 
-	CreateRepository(
+	CreateDriveTypeRepository(
 		ctx context.Context,
 		BodyType *DriveTypeDBModel,
 	) error
 
-	UpdateRepository(
+	UpdateDriveTypeRepository(
 		ctx context.Context,
 		id uuid.UUID,
 		request api_models.UpdateDriveTypeRequest,
