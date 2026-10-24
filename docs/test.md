@@ -88,6 +88,12 @@ Runs only for:
 go test -tags=integration ./...
 ```
 
+Если мы хотим без кеша и с повторым созданием БД и миграцией
+
+```bash
+go test -count=1 -v -tags=integration ./tests/...
+```
+
 ---
 
 ## e2e_test.go

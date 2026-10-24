@@ -9,3 +9,12 @@ env "local" {
     dir = "file://db/migrations"
   }
 }
+env "test" {
+  src = "file://db/schema/schema.sql"
+
+  url = "postgres://app:app@192.168.100.100:5436/car_rental_test?sslmode=disable"
+
+  migration {
+    dir = "file://db/migrations"
+  }
+}
