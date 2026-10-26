@@ -72,19 +72,15 @@ func (r *BunModelRepository) GetModelByNameRepository(
 
 	model := new(ModelDBModel)
 
-	println("GetByNameRepository-brandID->", brandID)
 	query := db.BunDB.NewSelect().
 		Model(model).
 		Relation("Brand").
 		Where("LOWER(models.name) = LOWER(?)", name)
 
-	println("GetByNameRepository-query-1->", query.String())
 	if brandID != nil {
 		query = query.Where("models.brand_id = ?", brandID)
 	}
-	println("GetByNameRepository-query-2->", query.String())
 	err := query.Scan(ctx)
-	println("GetByNameRepository-err->", err)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, api_errors.ErrNotFound

@@ -150,3 +150,102 @@ PATCH   validation error
 ```
 
 Для интеграционных тестов использование кеша недопустимо.
+
+# Запуск отдельных тестов
+
+## Запустить один файл с тестами
+
+Например:
+
+```bash
+go test -count=1 -v -tags=integration ./tests/integration/body_type_integration_test.go
+```
+
+Однако такой способ используется редко, потому что Go может не собрать зависимости внутри пакета.
+
+Обычно лучше запускать пакет целиком:
+
+```bash
+go test -count=1 -v -tags=integration ./tests/integration
+```
+
+---
+
+## Запустить один тест
+
+Флаг `-run` принимает регулярное выражение.
+
+Запуск конкретного теста:
+
+```bash
+go test -count=1 -v -tags=integration ./tests/integration \
+    -run Test_BodyType_Create_GetAll_Update_GetByID
+```
+
+---
+
+## Запустить несколько тестов
+
+Например все тесты для BodyType:
+
+```bash
+go test -count=1 -v -tags=integration ./tests/integration \
+    -run BodyType
+```
+
+Будут выполнены:
+
+```text
+Test_BodyType_Create_GetAll_Update_GetByID
+Test_BodyType_Create_DuplicateCode
+Test_BodyType_Update_DuplicateCode
+Test_BodyType_GetByID_NotFound
+
+Test_HTTP_BodyType_GetAll
+Test_HTTP_BodyType_Create
+...
+```
+
+---
+
+## Запустить только HTTP-тесты
+
+```bash
+go test -count=1 -v -tags=integration ./tests/integration \
+    -run HTTP
+```
+
+---
+
+## Запустить только сервисные тесты
+
+```bash
+go test -count=1 -v -tags=integration ./tests/integration \
+    -run '^Test_BodyType'
+```
+
+---
+
+## Показать список тестов без запуска
+
+```bash
+go test -tags=integration ./tests/integration -list .
+```
+
+---
+
+## Полезно при разработке
+
+Самая частая команда для отладки одного теста:
+
+```bash
+go test -count=1 -v -tags=integration ./tests/integration \
+    -run Test_BodyType_Create_GetAll_Update_GetByID
+```
+
+Она:
+
+- пересоздаёт тестовую БД;
+- накатывает миграции;
+- запускает только один нужный тест;
+- выводит подробный лог.

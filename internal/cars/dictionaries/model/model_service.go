@@ -64,21 +64,17 @@ func GetModelByIDService(
 ) (*api_models.Model, error) {
 
 	modelID, err := uuid.Parse(id)
-	println("----modelID->", modelID.String())
 
 	if err != nil {
 		return nil, err
 	}
 
 	repoModel := NewModelRepository()
-	println("----repoModel->", repoModel)
 
 	dbModel, err := repoModel.GetModelByIDRepository(
 		ctx,
 		modelID,
 	)
-	println("----dbModel->", dbModel)
-	println("----dbModel-err->", err)
 	if err != nil {
 		return nil, err
 	}
@@ -87,15 +83,12 @@ func GetModelByIDService(
 
 	if dbModel.Brand != nil {
 		brandID := dbModel.Brand.ID.String()
-		println("----dbModel-brandID->", brandID)
 		brandName := dbModel.Brand.Name
-		println("----dbModel-brandName->", brandName)
 		brand = &api_models.NameReference{
 			Id:   &brandID,
 			Name: &brandName,
 		}
 	}
-	println("----dbModel-brand->", brand)
 
 	return &api_models.Model{
 		Id:    dbModel.ID.String(),

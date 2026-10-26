@@ -61,7 +61,6 @@ func ResolveModelID(
 			*model.Name,
 			brandID,
 		)
-		println("model-existingModel->", existingModel)
 		if err == nil {
 			return &existingModel.ID, nil
 		}
@@ -69,12 +68,10 @@ func ResolveModelID(
 			Name:    *model.Name,
 			BrandID: brandID,
 		}
-		println("model-newModel->", newModel)
 		err = modelRepo.CreateRepository(
 			ctx,
 			newModel,
 		)
-		println("model-newModel-err->", err)
 		if err != nil {
 			return nil, err
 		}
