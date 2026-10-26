@@ -13,34 +13,33 @@ import (
 )
 
 /*
-Интеграционный тест справочника типов кузова.
+Интеграционный тест полного жизненного цикла BodyType.
 
 Сценарий:
 
 1. Создаём новый тип кузова.
 2. Получаем список типов кузова.
-2.1 Проверяем, что созданная запись присутствует в списке.
-3. Обновляем созданную запись.
-3.1 Получаем обновлённую запись по ID.
-3.2 Проверяем корректность обновления.
+3. Проверяем наличие созданной записи.
+4. Обновляем запись.
+5. Получаем запись по ID.
+6. Проверяем результат обновления.
 
-Что проверяет тест:
+Проверяем:
 
-- работу PostgreSQL;
-- работу миграций;
-- работу репозитория;
-- работу сервисного слоя;
-- корректность чтения и записи данных.
+- PostgreSQL;
+- миграции;
+- repository;
+- service;
+- чтение и запись данных.
 */
 func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 	ctx := context.Background()
 
-	//------------------------------------------------------------------
-	// 1. Создание
-	//------------------------------------------------------------------
-
 	createRequest := api_models.CreateCodeEntityRequest{
-		Code: fmt.Sprintf("TEST_BODY_TYPE_%d", time.Now().UnixNano()),
+		Code: fmt.Sprintf(
+			"TEST_BODY_TYPE_%d",
+			time.Now().UnixNano(),
+		),
 	}
 
 	created, err := body_type.CreateBodyTypeService(
@@ -63,18 +62,10 @@ func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 		)
 	}
 
-	//------------------------------------------------------------------
-	// 2. Получение списка
-	//------------------------------------------------------------------
-
 	items, err := body_type.GetBodyTypesService(ctx)
 	if err != nil {
 		t.Fatalf("ошибка получения списка: %v", err)
 	}
-
-	//------------------------------------------------------------------
-	// 2.1 Поиск созданной записи в списке
-	//------------------------------------------------------------------
 
 	found := false
 
@@ -92,11 +83,10 @@ func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 		)
 	}
 
-	//------------------------------------------------------------------
-	// 3. Обновление
-	//------------------------------------------------------------------
-
-	updatedCode := "UPDATED_BODY_TYPE"
+	updatedCode := fmt.Sprintf(
+		"UPDATED_BODY_TYPE_%d",
+		time.Now().UnixNano(),
+	)
 
 	updateRequest := api_models.UpdateCodeEntityRequest{
 		Code: &updatedCode,
@@ -115,10 +105,6 @@ func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 		t.Fatal("обновлённый объект равен nil")
 	}
 
-	//------------------------------------------------------------------
-	// 3.1 Получение по ID
-	//------------------------------------------------------------------
-
 	actual, err := body_type.GetBodyTypeByIDService(
 		ctx,
 		created.Id,
@@ -127,15 +113,131 @@ func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 		t.Fatalf("ошибка получения по id: %v", err)
 	}
 
-	//------------------------------------------------------------------
-	// 3.2 Проверка результата обновления
-	//------------------------------------------------------------------
-
 	if actual.Code != updatedCode {
 		t.Fatalf(
 			"ожидался код %q, получен %q",
 			updatedCode,
 			actual.Code,
 		)
+	}
+}
+
+/*
+Проверяем повторное создание записи с одинаковым кодом.
+
+Текущая бизнес-логика сервиса не создаёт дубликат,
+а возвращает уже существующую запись.
+*/
+func Test_BodyType_Create_DuplicateCode(t *testing.T) {
+	ctx := context.Background()
+
+	code := fmt.Sprintf(
+		"DUPLICATE_BODY_TYPE_%d",
+		time.Now().UnixNano(),
+	)
+
+	request := api_models.CreateCodeEntityRequest{
+		Code: code,
+	}
+
+	first, err := body_type.CreateBodyTypeService(
+		ctx,
+		request,
+	)
+	if err != nil {
+		t.Fatalf("ошибка первого создания: %v", err)
+	}
+
+	second, err := body_type.CreateBodyTypeService(
+		ctx,
+		request,
+	)
+	if err != nil {
+		t.Fatalf("ошибка повторного создания: %v", err)
+	}
+
+	if first.Id != second.Id {
+		t.Fatalf(
+			"ожидался возврат существующей записи, получены разные ID: %s и %s",
+			first.Id,
+			second.Id,
+		)
+	}
+}
+
+/*
+Проверяем ограничение уникальности кода при обновлении.
+
+Сценарий:
+
+1. Создаём первую запись.
+2. Создаём вторую запись.
+3. Пытаемся обновить вторую запись кодом первой.
+4. Ожидаем ошибку валидации.
+*/
+
+func Test_BodyType_Update_DuplicateCode(t *testing.T) {
+	ctx := context.Background()
+
+	firstCode := fmt.Sprintf(
+		"FIRST_%d",
+		time.Now().UnixNano(),
+	)
+
+	secondCode := fmt.Sprintf(
+		"SECOND_%d",
+		time.Now().UnixNano(),
+	)
+
+	_, err := body_type.CreateBodyTypeService(
+		ctx,
+		api_models.CreateCodeEntityRequest{
+			Code: firstCode,
+		},
+	)
+	if err != nil {
+		t.Fatalf("ошибка создания первой записи: %v", err)
+	}
+
+	second, err := body_type.CreateBodyTypeService(
+		ctx,
+		api_models.CreateCodeEntityRequest{
+			Code: secondCode,
+		},
+	)
+	if err != nil {
+		t.Fatalf("ошибка создания второй записи: %v", err)
+	}
+
+	request := api_models.UpdateCodeEntityRequest{
+		Code: &firstCode,
+	}
+
+	_, err = body_type.UpdateBodyTypeService(
+		ctx,
+		second.Id,
+		request,
+	)
+
+	if err == nil {
+		t.Fatal("ожидалась ошибка уникальности, получен nil")
+	}
+}
+
+/*
+Проверяем получение несуществующей записи.
+
+Ожидаем ошибку репозитория/сервиса.
+*/
+func Test_BodyType_GetByID_NotFound(t *testing.T) {
+	ctx := context.Background()
+
+	_, err := body_type.GetBodyTypeByIDService(
+		ctx,
+		"11111111-1111-1111-1111-111111111111",
+	)
+
+	if err == nil {
+		t.Fatal("ожидалась ошибка для несуществующего id")
 	}
 }

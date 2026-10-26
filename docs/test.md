@@ -1,202 +1,152 @@
-# Testing
+# Тестирование
 
-## Purpose
+В проекте используются два вида тестов:
 
-The project uses Go build tags to separate:
-
-- Unit tests
-- Integration tests
-- End-to-End (E2E) tests
-
-This allows fast tests to run by default and more expensive tests to be executed only when requested.
+1. Обычные тесты (unit-тесты и тесты без реальной БД).
+2. Интеграционные тесты (с реальной PostgreSQL базой данных).
 
 ---
 
-# Directory Structure
+# Обычные тесты
 
-```text
-tests/
-├─ testmain_test.go
-├─ database.go
-├─ integration_test.go
-└─ e2e_test.go
-```
-
----
-
-# Files
-
-## testmain_test.go
-
-Common entry point for Integration and E2E tests.
-
-Responsible for:
-
-1. Database setup
-2. Running tests
-3. Database cleanup
-
-Current implementation only prints messages.
-
-Future implementation:
-
-```text
-Drop schema
-↓
-Apply migrations
-↓
-Run tests
-↓
-Drop schema
-```
-
----
-
-## database.go
-
-Contains:
-
-```go
-PrepareDatabase()
-CleanupDatabase()
-```
-
-Current implementation only prints messages.
-
-Future implementation will:
-
-- connect to test database
-- recreate schema
-- apply Atlas migrations
-- cleanup schema after test execution
-
----
-
-## integration_test.go
-
-Example Integration test.
-
-Build tag:
-
-```go
-//go:build integration
-```
-
-Runs only for:
+Запуск:
 
 ```bash
-go test -tags=integration ./...
+go test -count=1 -v ./tests/...
 ```
 
-Если мы хотим без кеша и с повторным созданием БД и миграцией
+Особенности:
+
+- Не используют отдельную тестовую БД.
+- Выполняются быстро.
+- Не накатывают миграции.
+- Не требуют предварительной подготовки базы данных.
+
+---
+
+# Интеграционные тесты
+
+Запуск:
 
 ```bash
 go test -count=1 -v -tags=integration ./tests/...
 ```
 
----
-
-## e2e_test.go
-
-Example End-to-End test.
-
-Build tag:
-
-```go
-//go:build e2e
-```
-
-Runs only for:
+или только для интеграционного каталога:
 
 ```bash
-go test -tags=e2e ./...
-```
-
----
-
-# Commands
-
-## Run Unit Tests
-
-```bash
-go test ./...
-```
-
-Runs only tests without build tags.
-
----
-
-## Run Integration Tests
-
-```bash
-go test -v -tags=integration ./...
-```
-
-Expected output:
-
-```text
-=== DATABASE SETUP ===
-
-INTEGRATION TEST EXECUTED
-
-=== DATABASE CLEANUP ===
-```
-
----
-
-## Run E2E Tests
-
-```bash
-go test -v -tags=e2e ./...
-```
-
-Expected output:
-
-```text
-=== DATABASE SETUP ===
-
-E2E TEST EXECUTED
-
-=== DATABASE CLEANUP ===
-```
-
----
-
-# Future Database Lifecycle
-
-Integration and E2E tests will use the same lifecycle:
-
-```text
-PrepareDatabase()
-
-↓
-Drop schema
-
-↓
-Apply all migrations
-
-↓
-Run tests
-
-↓
-CleanupDatabase()
-
-↓
-Drop schema
-```
-
-This guarantees that every test run starts from a clean database state.
-
 go test -count=1 -v -tags=integration ./tests/integration/...
-
-Обычный тест
-
-```bach
- go test -count=1 -v  ./tests/...
 ```
 
-Интеграционный тест
+---
 
-```bach
- go test -count=1 -v -tags=integration ./tests/...
+# Что происходит при запуске интеграционных тестов
+
+Перед выполнением тестов автоматически выполняется следующий сценарий:
+
+1. Загружается конфигурация из `.env.test`.
+2. Выполняется очистка тестовой базы данных.
+3. Накатываются все миграции через Atlas.
+4. Создаётся подключение Bun к тестовой БД.
+5. Запускаются интеграционные тесты.
+
+Схема запуска:
+
+```text
+Load .env.test
+        ↓
+CleanupDatabase()
+        ↓
+Atlas migrate apply --env test
+        ↓
+ConnectBun()
+        ↓
+Run Tests
 ```
+
+---
+
+# Тестовая база данных
+
+Интеграционные тесты используют отдельную базу данных:
+
+```text
+car_rental_test
+```
+
+Тестовая база полностью изолирована от базы разработки.
+
+Перед каждым запуском тестов база очищается и создаётся заново посредством наката всех миграций.
+
+После завершения тестов база НЕ очищается.
+
+Это сделано специально, чтобы:
+
+- анализировать состояние данных после выполнения тестов;
+- упрощать отладку;
+- вручную проверять результаты через DBeaver, DataGrip и другие инструменты.
+
+---
+
+# Важно
+
+Если после изменения структуры БД интеграционные тесты начали падать:
+
+1. Проверьте, что новая миграция создана.
+2. Проверьте, что миграция успешно выполняется командой:
+
+```bash
+./cmd/schema/atlas.sh migrate apply --env test
+```
+
+3. Повторно запустите интеграционные тесты.
+
+---
+
+# Добавление новых интеграционных тестов
+
+Рекомендуемый подход:
+
+Для сервисного слоя:
+
+```text
+Create
+GetAll
+GetByID
+Update
+Негативные сценарии
+```
+
+Для HTTP-обработчиков:
+
+```text
+GET     happy path
+POST    happy path
+PATCH   happy path
+
+GET     invalid id
+POST    invalid body
+POST    validation error
+PATCH   invalid body
+PATCH   validation error
+```
+
+---
+
+# Отключение кеша Go
+
+Во всех командах используется:
+
+```bash
+-count=1
+```
+
+Это необходимо для того, чтобы Go не использовал кеш результатов тестов.
+
+Без этого флага может показаться, что тесты выполнились, хотя фактически был использован сохранённый результат предыдущего запуска:
+
+```text
+(cached)
+```
+
+Для интеграционных тестов использование кеша недопустимо.

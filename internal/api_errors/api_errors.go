@@ -5,6 +5,7 @@ import (
 	stdErrors "errors"
 	"log"
 	"net/http"
+	"strings"
 
 	shared_validation "github.com/Adisey/car-rental-api/internal/shared/validation"
 )
@@ -31,6 +32,11 @@ func HandleApiError(
 			validationResult.Response(),
 		)
 
+		return
+	}
+
+	if strings.Contains(err.Error(), "invalid UUID") {
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
