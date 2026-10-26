@@ -21,7 +21,7 @@ func ConnectBun() error {
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
 	)
-
+	println("ConnectBun", dsn)
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 
 	BunDB = bun.NewDB(

@@ -88,7 +88,7 @@ Runs only for:
 go test -tags=integration ./...
 ```
 
-Если мы хотим без кеша и с повторым созданием БД и миграцией
+Если мы хотим без кеша и с повторным созданием БД и миграцией
 
 ```bash
 go test -count=1 -v -tags=integration ./tests/...
@@ -186,3 +186,17 @@ Drop schema
 ```
 
 This guarantees that every test run starts from a clean database state.
+
+go test -count=1 -v -tags=integration ./tests/integration/...
+
+Обычный тест
+
+```bach
+ go test -count=1 -v  ./tests/...
+```
+
+Интеграционный тест
+
+```bach
+ go test -count=1 -v -tags=integration ./tests/...
+```

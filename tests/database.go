@@ -23,7 +23,7 @@ func PrepareDatabase() error {
 		"test",
 	)
 	// Запускаем из корня проекта
-	cmd.Dir = ".."
+	cmd.Dir = "../../"
 	// Добавляем переменную для atlas.sh
 	cmd.Env = append(
 		os.Environ(),
