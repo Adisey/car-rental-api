@@ -9,40 +9,40 @@ import (
 	"time"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
-	brand "github.com/Adisey/car-rental-api/internal/cars/dictionaries/brand"
+	fuel_type "github.com/Adisey/car-rental-api/internal/cars/dictionaries/fuel_type"
 )
 
-func Test_Brand_Create_GetAll_Update_GetByID(t *testing.T) {
+func Test_FuelType_Service_Create_GetAll_Update_GetByID(t *testing.T) {
 	ctx := context.Background()
 
-	createRequest := api_models.CreateBrandRequest{
-		Name: fmt.Sprintf(
-			"TEST_BRAND_%d",
+	createRequest := api_models.CreateCodeEntityRequest{
+		Code: fmt.Sprintf(
+			"TEST_FUEL_TYPE_%d",
 			time.Now().UnixNano(),
 		),
 	}
 
-	created, err := brand.CreateBrandService(
+	created, err := fuel_type.CreateFuelTypeService(
 		ctx,
 		createRequest,
 	)
 	if err != nil {
-		t.Fatalf("ошибка создания бренда: %v", err)
+		t.Fatalf("ошибка создания типа топлива: %v", err)
 	}
 
 	if created == nil {
 		t.Fatal("созданный объект равен nil")
 	}
 
-	if created.Name != createRequest.Name {
+	if created.Code != createRequest.Code {
 		t.Fatalf(
-			"ожидалось имя %q, получено %q",
-			createRequest.Name,
-			created.Name,
+			"ожидался код %q, получен %q",
+			createRequest.Code,
+			created.Code,
 		)
 	}
 
-	items, err := brand.GetBrandsService(ctx)
+	items, err := fuel_type.GetFuelTypesService(ctx)
 	if err != nil {
 		t.Fatalf("ошибка получения списка: %v", err)
 	}
@@ -63,16 +63,16 @@ func Test_Brand_Create_GetAll_Update_GetByID(t *testing.T) {
 		)
 	}
 
-	updatedName := fmt.Sprintf(
-		"UPDATED_BRAND_%d",
+	updatedCode := fmt.Sprintf(
+		"UPDATED_FUEL_TYPE_%d",
 		time.Now().UnixNano(),
 	)
 
-	updateRequest := api_models.UpdateBrandRequest{
-		Name: &updatedName,
+	updateRequest := api_models.UpdateCodeEntityRequest{
+		Code: &updatedCode,
 	}
 
-	updated, err := brand.UpdateBrandService(
+	updated, err := fuel_type.UpdateFuelTypeService(
 		ctx,
 		created.Id,
 		updateRequest,
@@ -85,7 +85,7 @@ func Test_Brand_Create_GetAll_Update_GetByID(t *testing.T) {
 		t.Fatal("обновлённый объект равен nil")
 	}
 
-	actual, err := brand.GetBrandByIDService(
+	actual, err := fuel_type.GetFuelTypeByIDService(
 		ctx,
 		created.Id,
 	)
@@ -93,28 +93,28 @@ func Test_Brand_Create_GetAll_Update_GetByID(t *testing.T) {
 		t.Fatalf("ошибка получения по id: %v", err)
 	}
 
-	if actual.Name != updatedName {
+	if actual.Code != updatedCode {
 		t.Fatalf(
-			"ожидалось имя %q, получено %q",
-			updatedName,
-			actual.Name,
+			"ожидался код %q, получен %q",
+			updatedCode,
+			actual.Code,
 		)
 	}
 }
 
-func Test_Brand_Create_DuplicateName(t *testing.T) {
+func Test_FuelType_Service_Create_DuplicateCode(t *testing.T) {
 	ctx := context.Background()
 
-	name := fmt.Sprintf(
-		"DUPLICATE_BRAND_%d",
+	code := fmt.Sprintf(
+		"DUPLICATE_FUEL_TYPE_%d",
 		time.Now().UnixNano(),
 	)
 
-	request := api_models.CreateBrandRequest{
-		Name: name,
+	request := api_models.CreateCodeEntityRequest{
+		Code: code,
 	}
 
-	first, err := brand.CreateBrandService(
+	first, err := fuel_type.CreateFuelTypeService(
 		ctx,
 		request,
 	)
@@ -122,7 +122,7 @@ func Test_Brand_Create_DuplicateName(t *testing.T) {
 		t.Fatalf("ошибка первого создания: %v", err)
 	}
 
-	second, err := brand.CreateBrandService(
+	second, err := fuel_type.CreateFuelTypeService(
 		ctx,
 		request,
 	)
@@ -139,44 +139,44 @@ func Test_Brand_Create_DuplicateName(t *testing.T) {
 	}
 }
 
-func Test_Brand_Update_DuplicateName(t *testing.T) {
+func Test_FuelType_Service_Update_DuplicateCode(t *testing.T) {
 	ctx := context.Background()
 
-	firstName := fmt.Sprintf(
+	firstCode := fmt.Sprintf(
 		"FIRST_%d",
 		time.Now().UnixNano(),
 	)
 
-	secondName := fmt.Sprintf(
+	secondCode := fmt.Sprintf(
 		"SECOND_%d",
 		time.Now().UnixNano(),
 	)
 
-	_, err := brand.CreateBrandService(
+	_, err := fuel_type.CreateFuelTypeService(
 		ctx,
-		api_models.CreateBrandRequest{
-			Name: firstName,
+		api_models.CreateCodeEntityRequest{
+			Code: firstCode,
 		},
 	)
 	if err != nil {
 		t.Fatalf("ошибка создания первой записи: %v", err)
 	}
 
-	second, err := brand.CreateBrandService(
+	second, err := fuel_type.CreateFuelTypeService(
 		ctx,
-		api_models.CreateBrandRequest{
-			Name: secondName,
+		api_models.CreateCodeEntityRequest{
+			Code: secondCode,
 		},
 	)
 	if err != nil {
 		t.Fatalf("ошибка создания второй записи: %v", err)
 	}
 
-	request := api_models.UpdateBrandRequest{
-		Name: &firstName,
+	request := api_models.UpdateCodeEntityRequest{
+		Code: &firstCode,
 	}
 
-	_, err = brand.UpdateBrandService(
+	_, err = fuel_type.UpdateFuelTypeService(
 		ctx,
 		second.Id,
 		request,
@@ -187,10 +187,10 @@ func Test_Brand_Update_DuplicateName(t *testing.T) {
 	}
 }
 
-func Test_Brand_GetByID_NotFound(t *testing.T) {
+func Test_FuelType_Service_GetByID_NotFound(t *testing.T) {
 	ctx := context.Background()
 
-	_, err := brand.GetBrandByIDService(
+	_, err := fuel_type.GetFuelTypeByIDService(
 		ctx,
 		"11111111-1111-1111-1111-111111111111",
 	)

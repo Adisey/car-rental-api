@@ -13,19 +13,19 @@ import (
 	"time"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
-	brand "github.com/Adisey/car-rental-api/internal/cars/dictionaries/brand"
+	color "github.com/Adisey/car-rental-api/internal/cars/dictionaries/color"
 )
 
-func Test_HTTP_Brand_GetAll(t *testing.T) {
+func Test_Color_HTTP_GetAll(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodGet,
-		"/brands",
+		"/colors",
 		nil,
 	)
 
 	rec := httptest.NewRecorder()
 
-	brand.BrandsMainHandler(
+	color.ColorsMainHandler(
 		rec,
 		req,
 	)
@@ -39,12 +39,15 @@ func Test_HTTP_Brand_GetAll(t *testing.T) {
 	}
 }
 
-func Test_HTTP_Brand_Create(t *testing.T) {
-	request := api_models.CreateBrandRequest{
-		Name: fmt.Sprintf(
-			"HTTP_BRAND_%d",
+func Test_Color_HTTP_Create(t *testing.T) {
+	hex := "#FF0000"
+
+	request := api_models.CreateColorRequest{
+		Code: fmt.Sprintf(
+			"HTTP_CREATE_%d",
 			time.Now().UnixNano(),
 		),
+		Hex: &hex,
 	}
 
 	body, err := json.Marshal(request)
@@ -54,13 +57,13 @@ func Test_HTTP_Brand_Create(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/brands",
+		"/colors",
 		bytes.NewBuffer(body),
 	)
 
 	rec := httptest.NewRecorder()
 
-	brand.BrandsMainHandler(
+	color.ColorsMainHandler(
 		rec,
 		req,
 	)
@@ -74,29 +77,41 @@ func Test_HTTP_Brand_Create(t *testing.T) {
 		)
 	}
 
-	var response api_models.Brand
+	var response api_models.Color
 
 	if err := json.NewDecoder(rec.Body).Decode(&response); err != nil {
 		t.Fatal(err)
 	}
 
-	if response.Name != request.Name {
+	if response.Code != request.Code {
 		t.Fatalf(
-			"ожидалось имя %q, получено %q",
-			request.Name,
-			response.Name,
+			"ожидался код %q, получен %q",
+			request.Code,
+			response.Code,
+		)
+	}
+
+	if response.Hex == nil {
+		t.Fatal("hex отсутствует в ответе")
+	}
+
+	if *response.Hex != hex {
+		t.Fatalf(
+			"ожидался hex %q, получен %q",
+			hex,
+			*response.Hex,
 		)
 	}
 }
 
-func Test_HTTP_Brand_Update(t *testing.T) {
+func Test_Color_HTTP_Update(t *testing.T) {
 	ctx := context.Background()
 
-	created, err := brand.CreateBrandService(
+	created, err := color.CreateColorService(
 		ctx,
-		api_models.CreateBrandRequest{
-			Name: fmt.Sprintf(
-				"PATCH_BRAND_%d",
+		api_models.CreateColorRequest{
+			Code: fmt.Sprintf(
+				"PATCH_TEST_%d",
 				time.Now().UnixNano(),
 			),
 		},
@@ -105,13 +120,16 @@ func Test_HTTP_Brand_Update(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	updatedName := fmt.Sprintf(
+	updatedCode := fmt.Sprintf(
 		"PATCH_UPDATED_%d",
 		time.Now().UnixNano(),
 	)
 
-	request := api_models.UpdateBrandRequest{
-		Name: &updatedName,
+	updatedHex := "#00FF00"
+
+	request := api_models.UpdateColorRequest{
+		Code: &updatedCode,
+		Hex:  &updatedHex,
 	}
 
 	body, err := json.Marshal(request)
@@ -121,13 +139,13 @@ func Test_HTTP_Brand_Update(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodPatch,
-		"/brands/"+created.Id,
+		"/colors/"+created.Id,
 		bytes.NewBuffer(body),
 	)
 
 	rec := httptest.NewRecorder()
 
-	brand.BrandByIDMainHandler(
+	color.ColorByIDMainHandler(
 		rec,
 		req,
 	)
@@ -141,31 +159,43 @@ func Test_HTTP_Brand_Update(t *testing.T) {
 		)
 	}
 
-	var response api_models.Brand
+	var response api_models.Color
 
 	if err := json.NewDecoder(rec.Body).Decode(&response); err != nil {
 		t.Fatal(err)
 	}
 
-	if response.Name != updatedName {
+	if response.Code != updatedCode {
 		t.Fatalf(
-			"ожидалось имя %q, получено %q",
-			updatedName,
-			response.Name,
+			"ожидался код %q, получен %q",
+			updatedCode,
+			response.Code,
+		)
+	}
+
+	if response.Hex == nil {
+		t.Fatal("hex отсутствует после обновления")
+	}
+
+	if *response.Hex != updatedHex {
+		t.Fatalf(
+			"ожидался hex %q, получен %q",
+			updatedHex,
+			*response.Hex,
 		)
 	}
 }
 
-func Test_HTTP_Brand_GetByID_InvalidUUID(t *testing.T) {
+func Test_Color_HTTP_GetByID_InvalidUUID(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodGet,
-		"/brands/not-a-uuid",
+		"/colors/not-a-uuid",
 		nil,
 	)
 
 	rec := httptest.NewRecorder()
 
-	brand.BrandByIDMainHandler(
+	color.ColorByIDMainHandler(
 		rec,
 		req,
 	)
@@ -179,16 +209,16 @@ func Test_HTTP_Brand_GetByID_InvalidUUID(t *testing.T) {
 	}
 }
 
-func Test_HTTP_Brand_Create_InvalidJSON(t *testing.T) {
+func Test_Color_HTTP_Create_InvalidJSON(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/brands",
+		"/colors",
 		bytes.NewBufferString("{invalid json"),
 	)
 
 	rec := httptest.NewRecorder()
 
-	brand.BrandsMainHandler(
+	color.ColorsMainHandler(
 		rec,
 		req,
 	)
@@ -202,8 +232,10 @@ func Test_HTTP_Brand_Create_InvalidJSON(t *testing.T) {
 	}
 }
 
-func Test_HTTP_Brand_Create_EmptyName(t *testing.T) {
-	request := api_models.CreateBrandRequest{}
+func Test_Color_HTTP_Create_EmptyCode(t *testing.T) {
+	request := api_models.CreateColorRequest{
+		Code: "",
+	}
 
 	body, err := json.Marshal(request)
 	if err != nil {
@@ -212,13 +244,13 @@ func Test_HTTP_Brand_Create_EmptyName(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/brands",
+		"/colors",
 		bytes.NewBuffer(body),
 	)
 
 	rec := httptest.NewRecorder()
 
-	brand.BrandsMainHandler(
+	color.ColorsMainHandler(
 		rec,
 		req,
 	)
@@ -232,16 +264,16 @@ func Test_HTTP_Brand_Create_EmptyName(t *testing.T) {
 	}
 }
 
-func Test_HTTP_Brand_Update_InvalidJSON(t *testing.T) {
+func Test_Color_HTTP_Update_InvalidJSON(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodPatch,
-		"/brands/11111111-1111-1111-1111-111111111111",
+		"/colors/11111111-1111-1111-1111-111111111111",
 		bytes.NewBufferString("{invalid json"),
 	)
 
 	rec := httptest.NewRecorder()
 
-	brand.BrandByIDMainHandler(
+	color.ColorByIDMainHandler(
 		rec,
 		req,
 	)

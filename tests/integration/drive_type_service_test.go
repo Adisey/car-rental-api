@@ -9,25 +9,25 @@ import (
 	"time"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
-	color "github.com/Adisey/car-rental-api/internal/cars/dictionaries/color"
+	drive_type "github.com/Adisey/car-rental-api/internal/cars/dictionaries/drive_type"
 )
 
-func Test_Color_Create_GetAll_Update_GetByID(t *testing.T) {
+func Test_DriveType_Service_Create_GetAll_Update_GetByID(t *testing.T) {
 	ctx := context.Background()
 
-	createRequest := api_models.CreateColorRequest{
+	createRequest := api_models.CreateCodeEntityRequest{
 		Code: fmt.Sprintf(
-			"TEST_COLOR_%d",
+			"TEST_DRIVE_TYPE_%d",
 			time.Now().UnixNano(),
 		),
 	}
 
-	created, err := color.CreateColorService(
+	created, err := drive_type.CreateDriveTypeService(
 		ctx,
 		createRequest,
 	)
 	if err != nil {
-		t.Fatalf("ошибка создания цвета: %v", err)
+		t.Fatalf("ошибка создания привода: %v", err)
 	}
 
 	if created == nil {
@@ -42,14 +42,7 @@ func Test_Color_Create_GetAll_Update_GetByID(t *testing.T) {
 		)
 	}
 
-	if created.Hex != nil {
-		t.Fatalf(
-			"ожидался nil hex, получен %v",
-			*created.Hex,
-		)
-	}
-
-	items, err := color.GetColorsService(ctx)
+	items, err := drive_type.GetDriveTypesService(ctx)
 	if err != nil {
 		t.Fatalf("ошибка получения списка: %v", err)
 	}
@@ -71,18 +64,15 @@ func Test_Color_Create_GetAll_Update_GetByID(t *testing.T) {
 	}
 
 	updatedCode := fmt.Sprintf(
-		"UPDATED_COLOR_%d",
+		"UPDATED_DRIVE_TYPE_%d",
 		time.Now().UnixNano(),
 	)
 
-	updatedHex := "#00FF00"
-
-	updateRequest := api_models.UpdateColorRequest{
+	updateRequest := api_models.UpdateCodeEntityRequest{
 		Code: &updatedCode,
-		Hex:  &updatedHex,
 	}
 
-	updated, err := color.UpdateColorService(
+	updated, err := drive_type.UpdateDriveTypeService(
 		ctx,
 		created.Id,
 		updateRequest,
@@ -95,7 +85,7 @@ func Test_Color_Create_GetAll_Update_GetByID(t *testing.T) {
 		t.Fatal("обновлённый объект равен nil")
 	}
 
-	actual, err := color.GetColorByIDService(
+	actual, err := drive_type.GetDriveTypeByIDService(
 		ctx,
 		created.Id,
 	)
@@ -110,65 +100,21 @@ func Test_Color_Create_GetAll_Update_GetByID(t *testing.T) {
 			actual.Code,
 		)
 	}
-
-	if actual.Hex == nil {
-		t.Fatal("hex отсутствует после обновления")
-	}
-
-	if *actual.Hex != updatedHex {
-		t.Fatalf(
-			"ожидался hex %q, получен %q",
-			updatedHex,
-			*actual.Hex,
-		)
-	}
 }
 
-func Test_Color_Create_WithHex(t *testing.T) {
-	ctx := context.Background()
-
-	hex := "#FF0000"
-
-	created, err := color.CreateColorService(
-		ctx,
-		api_models.CreateColorRequest{
-			Code: fmt.Sprintf(
-				"COLOR_%d",
-				time.Now().UnixNano(),
-			),
-			Hex: &hex,
-		},
-	)
-	if err != nil {
-		t.Fatalf("ошибка создания цвета: %v", err)
-	}
-
-	if created.Hex == nil {
-		t.Fatal("hex не сохранён")
-	}
-
-	if *created.Hex != hex {
-		t.Fatalf(
-			"ожидался hex %q, получен %q",
-			hex,
-			*created.Hex,
-		)
-	}
-}
-
-func Test_Color_Create_DuplicateCode(t *testing.T) {
+func Test_DriveType_Service_Create_DuplicateCode(t *testing.T) {
 	ctx := context.Background()
 
 	code := fmt.Sprintf(
-		"DUPLICATE_COLOR_%d",
+		"DUPLICATE_DRIVE_TYPE_%d",
 		time.Now().UnixNano(),
 	)
 
-	request := api_models.CreateColorRequest{
+	request := api_models.CreateCodeEntityRequest{
 		Code: code,
 	}
 
-	first, err := color.CreateColorService(
+	first, err := drive_type.CreateDriveTypeService(
 		ctx,
 		request,
 	)
@@ -176,7 +122,7 @@ func Test_Color_Create_DuplicateCode(t *testing.T) {
 		t.Fatalf("ошибка первого создания: %v", err)
 	}
 
-	second, err := color.CreateColorService(
+	second, err := drive_type.CreateDriveTypeService(
 		ctx,
 		request,
 	)
@@ -193,7 +139,7 @@ func Test_Color_Create_DuplicateCode(t *testing.T) {
 	}
 }
 
-func Test_Color_Update_DuplicateCode(t *testing.T) {
+func Test_DriveType_Service_Update_DuplicateCode(t *testing.T) {
 	ctx := context.Background()
 
 	firstCode := fmt.Sprintf(
@@ -206,9 +152,9 @@ func Test_Color_Update_DuplicateCode(t *testing.T) {
 		time.Now().UnixNano(),
 	)
 
-	_, err := color.CreateColorService(
+	_, err := drive_type.CreateDriveTypeService(
 		ctx,
-		api_models.CreateColorRequest{
+		api_models.CreateCodeEntityRequest{
 			Code: firstCode,
 		},
 	)
@@ -216,9 +162,9 @@ func Test_Color_Update_DuplicateCode(t *testing.T) {
 		t.Fatalf("ошибка создания первой записи: %v", err)
 	}
 
-	second, err := color.CreateColorService(
+	second, err := drive_type.CreateDriveTypeService(
 		ctx,
-		api_models.CreateColorRequest{
+		api_models.CreateCodeEntityRequest{
 			Code: secondCode,
 		},
 	)
@@ -226,11 +172,11 @@ func Test_Color_Update_DuplicateCode(t *testing.T) {
 		t.Fatalf("ошибка создания второй записи: %v", err)
 	}
 
-	request := api_models.UpdateColorRequest{
+	request := api_models.UpdateCodeEntityRequest{
 		Code: &firstCode,
 	}
 
-	_, err = color.UpdateColorService(
+	_, err = drive_type.UpdateDriveTypeService(
 		ctx,
 		second.Id,
 		request,
@@ -241,10 +187,10 @@ func Test_Color_Update_DuplicateCode(t *testing.T) {
 	}
 }
 
-func Test_Color_GetByID_NotFound(t *testing.T) {
+func Test_DriveType_Service_GetByID_NotFound(t *testing.T) {
 	ctx := context.Background()
 
-	_, err := color.GetColorByIDService(
+	_, err := drive_type.GetDriveTypeByIDService(
 		ctx,
 		"11111111-1111-1111-1111-111111111111",
 	)

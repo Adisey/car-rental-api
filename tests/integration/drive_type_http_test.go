@@ -4,7 +4,6 @@ package integration
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,26 +12,19 @@ import (
 	"time"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
-	body_type "github.com/Adisey/car-rental-api/internal/cars/dictionaries/body_type"
+	drive_type "github.com/Adisey/car-rental-api/internal/cars/dictionaries/drive_type"
 )
 
-/*
-Проверяет получение списка типов кузова через HTTP.
-
-Цепочка:
-
-HTTP -> Handler -> Service -> Repository -> PostgreSQL
-*/
-func Test_HTTP_BodyType_GetAll(t *testing.T) {
+func Test_DriveType_HTTP_GetAll(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodGet,
-		"/bodyTypes",
+		"/driveTypes",
 		nil,
 	)
 
 	rec := httptest.NewRecorder()
 
-	body_type.BodyTypesMainHandler(
+	drive_type.DriveTypesMainHandler(
 		rec,
 		req,
 	)
@@ -50,11 +42,8 @@ func Test_HTTP_BodyType_GetAll(t *testing.T) {
 	}
 }
 
-/*
-Проверяет создание записи через HTTP POST.
-*/
-func Test_HTTP_BodyType_Create(t *testing.T) {
-	request := api_models.CreateBodyTypeRequest{
+func Test_DriveType_HTTP_Create(t *testing.T) {
+	request := api_models.CreateCodeEntityRequest{
 		Code: fmt.Sprintf(
 			"HTTP_CREATE_%d",
 			time.Now().UnixNano(),
@@ -68,13 +57,13 @@ func Test_HTTP_BodyType_Create(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/bodyTypes",
+		"/driveTypes",
 		bytes.NewBuffer(body),
 	)
 
 	rec := httptest.NewRecorder()
 
-	body_type.BodyTypesMainHandler(
+	drive_type.DriveTypesMainHandler(
 		rec,
 		req,
 	)
@@ -88,7 +77,7 @@ func Test_HTTP_BodyType_Create(t *testing.T) {
 		)
 	}
 
-	var response api_models.BodyType
+	var response api_models.CodeEntity
 
 	if err := json.NewDecoder(rec.Body).Decode(&response); err != nil {
 		t.Fatal(err)
@@ -107,14 +96,9 @@ func Test_HTTP_BodyType_Create(t *testing.T) {
 	}
 }
 
-/*
-Проверяет обновление записи через HTTP PATCH.
-*/
-func Test_HTTP_BodyType_Update(t *testing.T) {
-	ctx := context.Background()
-
-	created, err := body_type.CreateBodyTypeService(
-		ctx,
+func Test_DriveType_HTTP_Update(t *testing.T) {
+	created, err := drive_type.CreateDriveTypeService(
+		t.Context(),
 		api_models.CreateCodeEntityRequest{
 			Code: fmt.Sprintf(
 				"PATCH_TEST_%d",
@@ -131,7 +115,7 @@ func Test_HTTP_BodyType_Update(t *testing.T) {
 		time.Now().UnixNano(),
 	)
 
-	request := api_models.UpdateBodyTypeRequest{
+	request := api_models.UpdateCodeEntityRequest{
 		Code: &updatedCode,
 	}
 
@@ -142,13 +126,13 @@ func Test_HTTP_BodyType_Update(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodPatch,
-		"/bodyTypes/"+created.Id,
+		"/driveTypes/"+created.Id,
 		bytes.NewBuffer(body),
 	)
 
 	rec := httptest.NewRecorder()
 
-	body_type.BodyTypeByIDMainHandler(
+	drive_type.DriveTypeByIDMainHandler(
 		rec,
 		req,
 	)
@@ -162,7 +146,7 @@ func Test_HTTP_BodyType_Update(t *testing.T) {
 		)
 	}
 
-	var response api_models.BodyType
+	var response api_models.CodeEntity
 
 	if err := json.NewDecoder(rec.Body).Decode(&response); err != nil {
 		t.Fatal(err)
@@ -177,16 +161,16 @@ func Test_HTTP_BodyType_Update(t *testing.T) {
 	}
 }
 
-func Test_HTTP_BodyType_GetByID_InvalidUUID(t *testing.T) {
+func Test_DriveType_HTTP_GetByID_InvalidUUID(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodGet,
-		"/bodyTypes/not-a-uuid",
+		"/driveTypes/not-a-uuid",
 		nil,
 	)
 
 	rec := httptest.NewRecorder()
 
-	body_type.BodyTypeByIDMainHandler(
+	drive_type.DriveTypeByIDMainHandler(
 		rec,
 		req,
 	)
@@ -200,16 +184,16 @@ func Test_HTTP_BodyType_GetByID_InvalidUUID(t *testing.T) {
 	}
 }
 
-func Test_HTTP_BodyType_Create_InvalidJSON(t *testing.T) {
+func Test_DriveType_HTTP_Create_InvalidJSON(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/bodyTypes",
+		"/driveTypes",
 		bytes.NewBufferString("{invalid json"),
 	)
 
 	rec := httptest.NewRecorder()
 
-	body_type.BodyTypesMainHandler(
+	drive_type.DriveTypesMainHandler(
 		rec,
 		req,
 	)
@@ -222,8 +206,9 @@ func Test_HTTP_BodyType_Create_InvalidJSON(t *testing.T) {
 		)
 	}
 }
-func Test_HTTP_BodyType_Create_EmptyCode(t *testing.T) {
-	request := api_models.CreateBodyTypeRequest{
+
+func Test_DriveType_HTTP_Create_EmptyCode(t *testing.T) {
+	request := api_models.CreateCodeEntityRequest{
 		Code: "",
 	}
 
@@ -234,36 +219,36 @@ func Test_HTTP_BodyType_Create_EmptyCode(t *testing.T) {
 
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/bodyTypes",
+		"/driveTypes",
 		bytes.NewBuffer(body),
 	)
 
 	rec := httptest.NewRecorder()
 
-	body_type.BodyTypesMainHandler(
+	drive_type.DriveTypesMainHandler(
 		rec,
 		req,
 	)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf(
-			"ожидался статус %d, получен %d\nbody=%s",
+			"ожидался статус %d, получен %d",
 			http.StatusBadRequest,
 			rec.Code,
-			rec.Body.String(),
 		)
 	}
 }
-func Test_HTTP_BodyType_Update_InvalidJSON(t *testing.T) {
+
+func Test_DriveType_HTTP_Update_InvalidJSON(t *testing.T) {
 	req := httptest.NewRequest(
 		http.MethodPatch,
-		"/bodyTypes/11111111-1111-1111-1111-111111111111",
+		"/driveTypes/11111111-1111-1111-1111-111111111111",
 		bytes.NewBufferString("{invalid json"),
 	)
 
 	rec := httptest.NewRecorder()
 
-	body_type.BodyTypeByIDMainHandler(
+	drive_type.DriveTypeByIDMainHandler(
 		rec,
 		req,
 	)

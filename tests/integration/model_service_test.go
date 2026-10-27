@@ -13,7 +13,7 @@ import (
 	model "github.com/Adisey/car-rental-api/internal/cars/dictionaries/model"
 )
 
-func Test_Model_Create_GetAll_Update_GetByID(t *testing.T) {
+func Test_Model_Service_Create_GetAll_Update_GetByID(t *testing.T) {
 	ctx := context.Background()
 
 	brandCreated, err := brand.CreateBrandService(
@@ -111,7 +111,7 @@ func Test_Model_Create_GetAll_Update_GetByID(t *testing.T) {
 	}
 }
 
-func Test_Model_Create_WithoutBrand(t *testing.T) {
+func Test_Model_Service_Create_WithoutBrand(t *testing.T) {
 	ctx := context.Background()
 
 	created, err := model.CreateModelService(
@@ -133,7 +133,7 @@ func Test_Model_Create_WithoutBrand(t *testing.T) {
 	}
 }
 
-func Test_Model_Create_WithNewBrand(t *testing.T) {
+func Test_Model_Service_Create_WithNewBrand(t *testing.T) {
 	ctx := context.Background()
 
 	brandName := fmt.Sprintf(
@@ -198,7 +198,7 @@ func Test_Model_Create_WithNewBrand(t *testing.T) {
 	}
 }
 
-func Test_Model_Create_DuplicateNameSameBrand(t *testing.T) {
+func Test_Model_Service_Create_DuplicateNameSameBrand(t *testing.T) {
 	ctx := context.Background()
 
 	brandCreated, err := brand.CreateBrandService(
@@ -250,7 +250,7 @@ func Test_Model_Create_DuplicateNameSameBrand(t *testing.T) {
 	}
 }
 
-func Test_Model_Create_SameNameDifferentBrands(t *testing.T) {
+func Test_Model_Service_Create_SameNameDifferentBrands(t *testing.T) {
 	ctx := context.Background()
 
 	brand1, err := brand.CreateBrandService(
@@ -315,7 +315,7 @@ func Test_Model_Create_SameNameDifferentBrands(t *testing.T) {
 	}
 }
 
-func Test_Model_Update_MoveToAnotherBrand(t *testing.T) {
+func Test_Model_Service_Update_MoveToAnotherBrand(t *testing.T) {
 	ctx := context.Background()
 
 	brand1, err := brand.CreateBrandService(
@@ -396,7 +396,7 @@ func Test_Model_Update_MoveToAnotherBrand(t *testing.T) {
 	}
 }
 
-func Test_Model_GetByID_NotFound(t *testing.T) {
+func Test_Model_Service_GetByID_NotFound(t *testing.T) {
 	ctx := context.Background()
 
 	_, err := model.GetModelByIDService(

@@ -9,45 +9,25 @@ import (
 	"time"
 
 	"github.com/Adisey/car-rental-api/internal/api_models"
-	body_type "github.com/Adisey/car-rental-api/internal/cars/dictionaries/body_type"
+	transmission_type "github.com/Adisey/car-rental-api/internal/cars/dictionaries/transmission_type"
 )
 
-/*
-Интеграционный тест полного жизненного цикла BodyType.
-
-Сценарий:
-
-1. Создаём новый тип кузова.
-2. Получаем список типов кузова.
-3. Проверяем наличие созданной записи.
-4. Обновляем запись.
-5. Получаем запись по ID.
-6. Проверяем результат обновления.
-
-Проверяем:
-
-- PostgreSQL;
-- миграции;
-- repository;
-- service;
-- чтение и запись данных.
-*/
-func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
+func Test_TransmissionType_Service_Create_GetAll_Update_GetByID(t *testing.T) {
 	ctx := context.Background()
 
 	createRequest := api_models.CreateCodeEntityRequest{
 		Code: fmt.Sprintf(
-			"TEST_BODY_TYPE_%d",
+			"TEST_TRANSMISSION_TYPE_%d",
 			time.Now().UnixNano(),
 		),
 	}
 
-	created, err := body_type.CreateBodyTypeService(
+	created, err := transmission_type.CreateTransmissionTypeService(
 		ctx,
 		createRequest,
 	)
 	if err != nil {
-		t.Fatalf("ошибка создания типа кузова: %v", err)
+		t.Fatalf("ошибка создания типа КПП: %v", err)
 	}
 
 	if created == nil {
@@ -62,7 +42,7 @@ func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 		)
 	}
 
-	items, err := body_type.GetBodyTypesService(ctx)
+	items, err := transmission_type.GetTransmissionTypesService(ctx)
 	if err != nil {
 		t.Fatalf("ошибка получения списка: %v", err)
 	}
@@ -84,7 +64,7 @@ func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 	}
 
 	updatedCode := fmt.Sprintf(
-		"UPDATED_BODY_TYPE_%d",
+		"UPDATED_TRANSMISSION_TYPE_%d",
 		time.Now().UnixNano(),
 	)
 
@@ -92,7 +72,7 @@ func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 		Code: &updatedCode,
 	}
 
-	updated, err := body_type.UpdateBodyTypeService(
+	updated, err := transmission_type.UpdateTransmissionTypeService(
 		ctx,
 		created.Id,
 		updateRequest,
@@ -105,7 +85,7 @@ func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 		t.Fatal("обновлённый объект равен nil")
 	}
 
-	actual, err := body_type.GetBodyTypeByIDService(
+	actual, err := transmission_type.GetTransmissionTypeByIDService(
 		ctx,
 		created.Id,
 	)
@@ -122,17 +102,11 @@ func Test_BodyType_Create_GetAll_Update_GetByID(t *testing.T) {
 	}
 }
 
-/*
-Проверяем повторное создание записи с одинаковым кодом.
-
-Текущая бизнес-логика сервиса не создаёт дубликат,
-а возвращает уже существующую запись.
-*/
-func Test_BodyType_Create_DuplicateCode(t *testing.T) {
+func Test_TransmissionType_Service_Create_DuplicateCode(t *testing.T) {
 	ctx := context.Background()
 
 	code := fmt.Sprintf(
-		"DUPLICATE_BODY_TYPE_%d",
+		"DUPLICATE_TRANSMISSION_TYPE_%d",
 		time.Now().UnixNano(),
 	)
 
@@ -140,7 +114,7 @@ func Test_BodyType_Create_DuplicateCode(t *testing.T) {
 		Code: code,
 	}
 
-	first, err := body_type.CreateBodyTypeService(
+	first, err := transmission_type.CreateTransmissionTypeService(
 		ctx,
 		request,
 	)
@@ -148,7 +122,7 @@ func Test_BodyType_Create_DuplicateCode(t *testing.T) {
 		t.Fatalf("ошибка первого создания: %v", err)
 	}
 
-	second, err := body_type.CreateBodyTypeService(
+	second, err := transmission_type.CreateTransmissionTypeService(
 		ctx,
 		request,
 	)
@@ -165,18 +139,7 @@ func Test_BodyType_Create_DuplicateCode(t *testing.T) {
 	}
 }
 
-/*
-Проверяем ограничение уникальности кода при обновлении.
-
-Сценарий:
-
-1. Создаём первую запись.
-2. Создаём вторую запись.
-3. Пытаемся обновить вторую запись кодом первой.
-4. Ожидаем ошибку валидации.
-*/
-
-func Test_BodyType_Update_DuplicateCode(t *testing.T) {
+func Test_TransmissionType_Service_Update_DuplicateCode(t *testing.T) {
 	ctx := context.Background()
 
 	firstCode := fmt.Sprintf(
@@ -189,7 +152,7 @@ func Test_BodyType_Update_DuplicateCode(t *testing.T) {
 		time.Now().UnixNano(),
 	)
 
-	_, err := body_type.CreateBodyTypeService(
+	_, err := transmission_type.CreateTransmissionTypeService(
 		ctx,
 		api_models.CreateCodeEntityRequest{
 			Code: firstCode,
@@ -199,7 +162,7 @@ func Test_BodyType_Update_DuplicateCode(t *testing.T) {
 		t.Fatalf("ошибка создания первой записи: %v", err)
 	}
 
-	second, err := body_type.CreateBodyTypeService(
+	second, err := transmission_type.CreateTransmissionTypeService(
 		ctx,
 		api_models.CreateCodeEntityRequest{
 			Code: secondCode,
@@ -213,7 +176,7 @@ func Test_BodyType_Update_DuplicateCode(t *testing.T) {
 		Code: &firstCode,
 	}
 
-	_, err = body_type.UpdateBodyTypeService(
+	_, err = transmission_type.UpdateTransmissionTypeService(
 		ctx,
 		second.Id,
 		request,
@@ -224,15 +187,10 @@ func Test_BodyType_Update_DuplicateCode(t *testing.T) {
 	}
 }
 
-/*
-Проверяем получение несуществующей записи.
-
-Ожидаем ошибку репозитория/сервиса.
-*/
-func Test_BodyType_GetByID_NotFound(t *testing.T) {
+func Test_TransmissionType_Service_GetByID_NotFound(t *testing.T) {
 	ctx := context.Background()
 
-	_, err := body_type.GetBodyTypeByIDService(
+	_, err := transmission_type.GetTransmissionTypeByIDService(
 		ctx,
 		"11111111-1111-1111-1111-111111111111",
 	)

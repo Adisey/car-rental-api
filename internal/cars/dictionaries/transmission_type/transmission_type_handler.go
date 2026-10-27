@@ -41,17 +41,17 @@ func getTransmissionTypesHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	bodyTypes, err := GetTransmissionTypesService(r.Context())
+	transmissionTypes, err := GetTransmissionTypesService(r.Context())
 	if err != nil {
 		api_errors.HandleApiError(w, err)
 		return
 	}
 
-	_ = json.NewEncoder(w).Encode(bodyTypes)
+	_ = json.NewEncoder(w).Encode(transmissionTypes)
 }
 
 func getTransmissionTypeByIDHandler(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/bodyTypes/")
+	id := strings.TrimPrefix(r.URL.Path, "/transmissionTypes/")
 	bodyType, err := GetTransmissionTypeByIDService(r.Context(), id)
 	if err != nil {
 		api_errors.HandleApiError(w, err)
@@ -95,7 +95,7 @@ func createTransmissionTypeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTransmissionTypeHandler(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/bodyTypes/")
+	id := strings.TrimPrefix(r.URL.Path, "/transmissionTypes/")
 	var request api_models.UpdateTransmissionTypeRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)

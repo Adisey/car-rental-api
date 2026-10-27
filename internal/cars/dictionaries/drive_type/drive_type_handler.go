@@ -41,17 +41,17 @@ func getDriveTypesHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	bodyTypes, err := GetDriveTypesService(r.Context())
+	driveType, err := GetDriveTypesService(r.Context())
 	if err != nil {
 		api_errors.HandleApiError(w, err)
 		return
 	}
 
-	_ = json.NewEncoder(w).Encode(bodyTypes)
+	_ = json.NewEncoder(w).Encode(driveType)
 }
 
 func getDriveTypeByIDHandler(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/bodyTypes/")
+	id := strings.TrimPrefix(r.URL.Path, "/driveType/")
 	bodyType, err := GetDriveTypeByIDService(r.Context(), id)
 	if err != nil {
 		api_errors.HandleApiError(w, err)
@@ -95,7 +95,7 @@ func createDriveTypeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateDriveTypeHandler(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/bodyTypes/")
+	id := strings.TrimPrefix(r.URL.Path, "/driveTypes/")
 	var request api_models.UpdateDriveTypeRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)

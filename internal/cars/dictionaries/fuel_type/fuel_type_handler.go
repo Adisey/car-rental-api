@@ -41,17 +41,17 @@ func getFuelTypesHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	bodyTypes, err := GetFuelTypesService(r.Context())
+	furlTypes, err := GetFuelTypesService(r.Context())
 	if err != nil {
 		api_errors.HandleApiError(w, err)
 		return
 	}
 
-	_ = json.NewEncoder(w).Encode(bodyTypes)
+	_ = json.NewEncoder(w).Encode(furlTypes)
 }
 
 func getFuelTypeByIDHandler(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/bodyTypes/")
+	id := strings.TrimPrefix(r.URL.Path, "/furlTypes/")
 	bodyType, err := GetFuelTypeByIDService(r.Context(), id)
 	if err != nil {
 		api_errors.HandleApiError(w, err)
@@ -95,7 +95,7 @@ func createFuelTypeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateFuelTypeHandler(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/bodyTypes/")
+	id := strings.TrimPrefix(r.URL.Path, "/fuelTypes/")
 	var request api_models.UpdateFuelTypeRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
