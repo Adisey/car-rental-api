@@ -112,25 +112,25 @@ func (r *BunCarRepository) UpdateCarRepository(
 	if request.PowerHp != nil {
 		car.PowerHp = request.PowerHp
 	}
-	if relations.UpdateBody != nil {
+	if relations.UpdateBody != nil && *relations.UpdateBody {
 		car.BodyTypeID = relations.BodyID
 	}
-	if relations.UpdateBrand != nil {
+	if relations.UpdateBrand != nil && *relations.UpdateBrand {
 		car.BrandID = relations.BrandID
 	}
-	if relations.UpdateColor != nil {
+	if relations.UpdateColor != nil && *relations.UpdateColor {
 		car.ColorID = relations.ColorID
 	}
-	if relations.UpdateDrive != nil {
+	if relations.UpdateDrive != nil && *relations.UpdateDrive {
 		car.DriveID = relations.DriveID
 	}
-	if relations.UpdateFuel != nil {
+	if relations.UpdateFuel != nil && *relations.UpdateFuel {
 		car.FuelID = relations.FuelID
 	}
-	if relations.UpdateModel != nil {
+	if relations.UpdateModel != nil && *relations.UpdateModel {
 		car.ModelID = relations.ModelID
 	}
-	if relations.UpdateTransmission != nil {
+	if relations.UpdateTransmission != nil && *relations.UpdateTransmission {
 		car.TransmissionID = relations.TransmissionID
 	}
 	car.UpdatedAt = time.Now().UTC()

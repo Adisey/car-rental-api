@@ -206,6 +206,12 @@ Test_HTTP_BodyType_Create
 ...
 ```
 
+## Запустить несколько тестов по типу
+
+```bash
+go test ./tests/integration -tags=integration -run Test_Car_Service_ -v
+```
+
 ---
 
 ## Запустить только HTTP-тесты

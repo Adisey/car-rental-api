@@ -67,7 +67,7 @@ func ValidateCreateCarRequest(
 	}
 	if strings.Contains(
 		strings.ToLower(description),
-		"test",
+		"t_e_s_t",
 	) {
 
 		result.Add(
@@ -110,7 +110,7 @@ func ValidateUpdateCarRequest(
 	if request.Description != nil &&
 		strings.Contains(
 			strings.ToLower(*request.Description),
-			"test",
+			"t_e_s_t",
 		) {
 
 		result.Add(

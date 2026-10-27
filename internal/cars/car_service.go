@@ -60,7 +60,6 @@ func CreateCarService(
 	if validationResult.HasErrors() {
 		return nil, validationResult
 	}
-	println("service-3->", "isValid")
 
 	var bodyTypeID *uuid.UUID
 	if request.BodyType != nil &&
@@ -74,7 +73,6 @@ func CreateCarService(
 			return nil, err
 		}
 	}
-	println("service-bodyTypeID->", bodyTypeID)
 	var brandID *uuid.UUID
 	if request.Brand != nil &&
 		!shared_references.IsEmptyNameReference(request.Brand) {
@@ -87,7 +85,6 @@ func CreateCarService(
 			return nil, err
 		}
 	}
-	println("service-brandID->", brandID)
 	var colorID *uuid.UUID
 	if request.Color != nil &&
 		!shared_references.IsEmptyColorReference(request.Color) {
@@ -100,7 +97,6 @@ func CreateCarService(
 			return nil, err
 		}
 	}
-	println("service-colorID->", colorID)
 	var driveTypeID *uuid.UUID
 	if request.DriveType != nil &&
 		!shared_references.IsEmptyCodeReference(request.DriveType) {
@@ -113,7 +109,6 @@ func CreateCarService(
 			return nil, err
 		}
 	}
-	println("service-driveTypeID->", driveTypeID)
 	var FuelTypeID *uuid.UUID
 	if request.FuelType != nil &&
 		!shared_references.IsEmptyCodeReference(request.FuelType) {
@@ -126,34 +121,27 @@ func CreateCarService(
 			return nil, err
 		}
 	}
-	println("service-FuelTypeID->", FuelTypeID)
 	var modelID *uuid.UUID
 	if request.Model != nil {
 		model := request.Model
 		if model.Brand == nil &&
 			brandID != nil {
 			brandIDString := brandID.String()
-			println("service-modelID-brandIDString->", brandIDString)
 			model.Brand = &api_models.NameReference{
 				Id: &brandIDString,
 			}
 		}
 		if !shared_references.IsEmptyModelReference(model) {
 			var err error
-			println("service-modelID------>", 7)
 			modelID, err = car_model.ResolveModelID(
 				ctx,
 				model,
 			)
-			println("service-modelID------>", 8)
-			println("service-modelID--id-->", modelID)
-			println("service-modelID--err->", err)
 			if err != nil {
 				return nil, err
 			}
 		}
 	}
-	println("service-modelID->", modelID)
 	var transmissionTypeID *uuid.UUID
 	if request.TransmissionType != nil &&
 		!shared_references.IsEmptyCodeReference(request.TransmissionType) {
@@ -166,8 +154,6 @@ func CreateCarService(
 			return nil, err
 		}
 	}
-	println("service-transmissionTypeID->", transmissionTypeID)
-
 	repo := NewCarRepository()
 	car := &CarDBModel{
 		Name:           request.Name,
@@ -181,7 +167,6 @@ func CreateCarService(
 		ModelID:        modelID,
 		TransmissionID: transmissionTypeID,
 	}
-	println("service-car->", car)
 	err := repo.CreateCarRepository(ctx, car)
 	if err != nil {
 		return nil, err

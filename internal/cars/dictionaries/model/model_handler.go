@@ -3,7 +3,6 @@ package car_model
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"strings"
 
@@ -49,7 +48,6 @@ func getModelsHandler(
 	r *http.Request,
 ) {
 
-	log.Println("GET /models")
 
 	models, err := GetModelsService(
 		r.Context(),
@@ -85,10 +83,7 @@ func getModelByIDHandler(
 		"/models/",
 	)
 
-	log.Println(
-		"GET /models/",
-		id,
-	)
+
 
 	model, err := GetModelByIDService(
 		r.Context(),

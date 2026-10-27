@@ -3,7 +3,6 @@ package api_errors
 import (
 	"encoding/json"
 	stdErrors "errors"
-	"log"
 	"net/http"
 	"strings"
 
@@ -15,7 +14,7 @@ func HandleApiError(
 	err error,
 ) {
 
-	log.Printf("HandleApiError: %v", err)
+	// log.Printf("HandleApiError: %v", err)
 
 	var validationResult *shared_validation.ValidationResult
 

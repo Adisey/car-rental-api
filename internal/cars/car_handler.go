@@ -3,7 +3,6 @@ package car
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"strings"
 
@@ -72,7 +71,6 @@ func createCarHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("createCarHandler->", request)
 	car, err := CreateCarService(
 		r.Context(),
 		request,
