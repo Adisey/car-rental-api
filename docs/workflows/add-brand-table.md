@@ -157,7 +157,7 @@ Brand Brand `bun:"rel:belongs-to,join:brand_id=id"`
 
 Пример:
 
-````go
+```go
 ty*e Car struct {
 	bun.BaseModel `bun*"table:cars"`
 
@@ -172,7 +172,7 @@ ty*e Car struct {
 	UpdatedAt   time.Time  `bun:",notnull,default:CURRENT_TIMESTAMP"`
 	DeletedAt   *time.Time `bun:"type:timestamptz"`
 }
-``*
+```
 
 ---
 
@@ -182,7 +182,7 @@ ty*e Car struct {
 
 ```text
 cmd/schema/main.go
-````
+```
 
 Добавить:
 

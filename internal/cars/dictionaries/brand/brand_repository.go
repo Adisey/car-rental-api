@@ -9,7 +9,7 @@ import (
 )
 
 type BrandRepository interface {
-	GetBrandAllRepository(ctx context.Context) ([]BrandDBModel, error)
+	GetBrandsAllRepository(ctx context.Context) ([]BrandDBModel, error)
 
 	GetBrandByIDRepository(
 		ctx context.Context,

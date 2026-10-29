@@ -56,3 +56,13 @@ func AddError(
 		},
 	)
 }
+
+func (v *ValidationResult) Merge(other *ValidationResult) {
+	if other == nil {
+		return
+	}
+
+	for field, errors := range other.fields {
+		v.fields[field] = append(v.fields[field], errors...)
+	}
+}

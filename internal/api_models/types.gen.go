@@ -118,6 +118,14 @@ type CreateColorRequest struct {
 	Hex  *string `json:"hex,omitempty"`
 }
 
+// CreateCustomerRequest defines model for CreateCustomerRequest.
+type CreateCustomerRequest struct {
+	Email     *string `json:"email,omitempty"`
+	FirstName string  `json:"first_name"`
+	LastName  *string `json:"last_name,omitempty"`
+	Phone     *string `json:"phone,omitempty"`
+}
+
 // CreateDriveTypeRequest defines model for CreateDriveTypeRequest.
 type CreateDriveTypeRequest = CreateCodeEntityRequest
 
@@ -137,6 +145,17 @@ type CreateNameEntityRequest struct {
 
 // CreateTransmissionTypeRequest defines model for CreateTransmissionTypeRequest.
 type CreateTransmissionTypeRequest = CreateCodeEntityRequest
+
+// Customer defines model for Customer.
+type Customer struct {
+	CreatedAt time.Time `json:"created_at"`
+	Email     *string   `json:"email,omitempty"`
+	FirstName string    `json:"first_name"`
+	Id        string    `json:"id"`
+	LastName  *string   `json:"last_name,omitempty"`
+	Phone     *string   `json:"phone,omitempty"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
 
 // DriveType defines model for DriveType.
 type DriveType = CodeEntity
@@ -247,6 +266,14 @@ type UpdateColorRequest struct {
 	Hex  *string `json:"hex,omitempty"`
 }
 
+// UpdateCustomerRequest defines model for UpdateCustomerRequest.
+type UpdateCustomerRequest struct {
+	Email     *string `json:"email,omitempty"`
+	FirstName *string `json:"first_name,omitempty"`
+	LastName  *string `json:"last_name,omitempty"`
+	Phone     *string `json:"phone,omitempty"`
+}
+
 // UpdateDriveTypeRequest defines model for UpdateDriveTypeRequest.
 type UpdateDriveTypeRequest = UpdateCodeEntityRequest
 
@@ -295,6 +322,12 @@ type CreateColorJSONRequestBody = CreateColorRequest
 
 // UpdateColorJSONRequestBody defines body for UpdateColor for application/json ContentType.
 type UpdateColorJSONRequestBody = UpdateColorRequest
+
+// CreateCustomerJSONRequestBody defines body for CreateCustomer for application/json ContentType.
+type CreateCustomerJSONRequestBody = CreateCustomerRequest
+
+// UpdateCustomerJSONRequestBody defines body for UpdateCustomer for application/json ContentType.
+type UpdateCustomerJSONRequestBody = UpdateCustomerRequest
 
 // DriveTypeJSONRequestBody defines body for DriveType for application/json ContentType.
 type DriveTypeJSONRequestBody = CreateDriveTypeRequest

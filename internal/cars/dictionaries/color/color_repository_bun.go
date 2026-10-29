@@ -19,22 +19,22 @@ func NewColorRepository() *BunColorRepository {
 }
 
 func (r *BunColorRepository) GetColorAll(ctx context.Context) ([]ColorDBModel, error) {
-	var Colors []ColorDBModel
+	var colors []ColorDBModel
 
 	err := db.BunDB.NewSelect().
-		Model(&Colors).
+		Model(&colors).
 		Scan(ctx)
 
-	return Colors, err
+	return colors, err
 }
 
 func (r *BunColorRepository) GetColorByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*ColorDBModel, error) {
-	Color := new(ColorDBModel)
+	color := new(ColorDBModel)
 	err := db.BunDB.NewSelect().
-		Model(Color).
+		Model(color).
 		Where("id = ?", id).
 		Scan(ctx)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -43,15 +43,15 @@ func (r *BunColorRepository) GetColorByIDRepository(
 	if err != nil {
 		return nil, err
 	}
-	return Color, nil
+	return color, nil
 }
 
 func (r *BunColorRepository) CreateColorRepository(
 	ctx context.Context,
-	Color *ColorDBModel,
+	color *ColorDBModel,
 ) error {
 	_, err := db.BunDB.NewInsert().
-		Model(Color).
+		Model(color).
 		Exec(ctx)
 
 	return err
@@ -62,22 +62,22 @@ func (r *BunColorRepository) UpdateColorRepository(
 	id uuid.UUID,
 	request api_models.UpdateColorRequest,
 ) (*ColorDBModel, error) {
-	Color, err := r.GetColorByIDRepository(ctx, id)
+	color, err := r.GetColorByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	if request.Code != nil {
-		Color.Code = *request.Code
-		Color.Hex = request.Hex
+		color.Code = *request.Code
+		color.Hex = request.Hex
 	}
 	_, err = db.BunDB.NewUpdate().
-		Model(Color).
+		Model(color).
 		WherePK().
 		Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return Color, nil
+	return color, nil
 }
 
 func (r *BunColorRepository) GetColorByCodeRepository(

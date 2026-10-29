@@ -23,7 +23,6 @@ func (r *BunBodyTypeRepository) GetBodyTypeAll(ctx context.Context) ([]BodyTypeD
 	err := db.BunDB.NewSelect().
 		Model(&bodyTypes).
 		Scan(ctx)
-
 	return bodyTypes, err
 }
 

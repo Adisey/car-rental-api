@@ -600,6 +600,75 @@ paths:
         "404":
           description: Model not found
 
+  /customers:
+    get:
+      operationId: getCustomers
+      responses:
+        "200":
+          description: Customers list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Customer"
+    post:
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCustomerRequest"
+      responses:
+        "201":
+          description: Customer created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+  /customers/{id}:
+    get:
+      operationId: getCustomerById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "404":
+          description: Customer not found
+    patch:
+      operationId: updateCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCustomerRequest"
+      responses:
+        "200":
+          description: Updated customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "404":
+          description: Customer not found
+
 
 components:
   schemas:
@@ -1035,3 +1104,67 @@ components:
       allOf:
           - $ref: "#/components/schemas/UpdateCodeEntityRequest"     
 
+#  Customers 
+    Customer:
+      allOf:
+        - $ref: "#/components/schemas/AuditableEntity"
+        - type: object
+          required:
+            - id
+            - first_name
+          properties:
+            id:
+              type: string
+            first_name:
+              type: string
+              maxLength: 100
+            last_name:
+              type: string
+              nullable: true
+              maxLength: 100
+            phone:
+              type: string
+              nullable: true
+              maxLength: 50
+            email:
+              type: string
+              nullable: true
+              maxLength: 100
+    CreateCustomerRequest:
+      type: object
+      required:
+        - first_name
+      properties:
+        first_name:
+          type: string
+          minLength: 3
+          maxLength: 100
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 100
+        phone:
+          type: string
+          nullable: true
+          maxLength: 50
+        email:
+          type: string
+          nullable: true
+          maxLength: 100
+    UpdateCustomerRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        
+    

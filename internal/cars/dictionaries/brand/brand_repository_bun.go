@@ -19,23 +19,23 @@ func NewBrandRepository() *BunBrandRepository {
 }
 
 func (r *BunBrandRepository) GetBrandAll(ctx context.Context) ([]BrandDBModel, error) {
-	var Brands []BrandDBModel
+	var brands []BrandDBModel
 
 	err := db.BunDB.NewSelect().
-		Model(&Brands).
+		Model(&brands).
 		Scan(ctx)
 
-	return Brands, err
+	return brands, err
 }
 
 func (r *BunBrandRepository) GetBrandByIDRepository(
 	ctx context.Context,
 	id uuid.UUID,
 ) (*BrandDBModel, error) {
-	Brand := new(BrandDBModel)
+	brand := new(BrandDBModel)
 
 	err := db.BunDB.NewSelect().
-		Model(Brand).
+		Model(brand).
 		Where("id = ?", id).
 		Scan(ctx)
 
@@ -47,16 +47,16 @@ func (r *BunBrandRepository) GetBrandByIDRepository(
 		return nil, err
 	}
 
-	return Brand, nil
+	return brand, nil
 }
 
 func (r *BunBrandRepository) CreateBrandRepository(
 	ctx context.Context,
-	Brand *BrandDBModel,
+	brand *BrandDBModel,
 ) error {
 
 	_, err := db.BunDB.NewInsert().
-		Model(Brand).
+		Model(brand).
 		Exec(ctx)
 
 	return err
@@ -68,22 +68,22 @@ func (r *BunBrandRepository) UpdateBrandRepository(
 	request api_models.UpdateBrandRequest,
 ) (*BrandDBModel, error) {
 
-	Brand, err := r.GetBrandByIDRepository(ctx, id)
+	brand, err := r.GetBrandByIDRepository(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	if request.Name != nil {
-		Brand.Name = *request.Name
+		brand.Name = *request.Name
 	}
 	_, err = db.BunDB.NewUpdate().
-		Model(Brand).
+		Model(brand).
 		WherePK().
 		Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return Brand, nil
+	return brand, nil
 }
 
 func (r *BunBrandRepository) GetBrandByNameRepository(
